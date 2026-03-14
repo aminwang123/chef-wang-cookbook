@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Cookbook · 我的食谱</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fafaf8;
+    --bg2: #f2f1ee;
+    --bg3: #ffffff;
+    --text: #1a1a18;
+    --text2: #6b6b65;
+    --text3: #9a9a94;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.18);
+    --green: #1D9E75;
+    --green-bg: #E1F5EE;
+    --green-dark: #0F6E56;
+    --radius: 10px;
+    --radius-lg: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1a1a18;
+      --bg2: #242422;
+      --bg3: #2a2a28;
+      --text: #f0f0ec;
+      --text2: #9a9a94;
+      --text3: #6b6b65;
+      --border: rgba(255,255,255,0.1);
+      --border2: rgba(255,255,255,0.18);
+      --green-bg: #0d3d2c;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  /* Layout */
+  .app { max-width: 900px; margin: 0 auto; padding: 1.5rem 1.25rem; }
+
+  /* Header */
+  .hdr { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; border-bottom: .5px solid var(--border); padding-bottom: 1rem; margin-bottom: 1.5rem; }
+  .hdr-left { display: flex; align-items: baseline; gap: 10px; }
+  .hdr-title { font-family: 'Lora', serif; font-size: 24px; font-weight: 400; }
+  .hdr-title em { font-style: italic; color: var(--text2); }
+  .hdr-sub { font-size: 13px; color: var(--text3); }
+  .hdr-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .lang-toggle { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text2); cursor: pointer; }
+  .lang-toggle input { cursor: pointer; accent-color: var(--green); }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 6px; }
+  .tab { font-size: 13px; padding: 6px 14px; border: .5px solid var(--border2); border-radius: var(--radius); background: transparent; cursor: pointer; color: var(--text2); font-family: 'DM Sans', sans-serif; transition: all .15s; }
+  .tab.on { background: var(--text); color: var(--bg); border-color: var(--text); }
+
+  /* Search */
+  .search-row { display: flex; gap: 8px; margin-bottom: 1rem; }
+  .srch { flex: 1; padding: 8px 12px; font-size: 14px; border: .5px solid var(--border2); border-radius: var(--radius); background: var(--bg3); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .15s; }
+  .srch:focus { border-color: var(--green); }
+
+  /* Ingredient tags */
+  .itags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 1.1rem; }
+  .itag { font-size: 12px; padding: 3px 10px; background: var(--bg2); border: .5px solid var(--border); border-radius: 999px; cursor: pointer; color: var(--text2); transition: all .12s; }
+  .itag.on { background: var(--green); color: #fff; border-color: var(--green-dark); }
+
+  /* Grid */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .card { background: var(--bg3); border: .5px solid var(--border); border-radius: var(--radius-lg); padding: 1rem 1.1rem; cursor: pointer; transition: border-color .15s, transform .12s; }
+  .card:hover { border-color: var(--border2); transform: translateY(-1px); }
+  .card-emoji { font-size: 28px; margin-bottom: 8px; }
+  .card-name { font-family: 'Lora', serif; font-size: 16px; line-height: 1.3; margin-bottom: 2px; }
+  .card-name-cn { font-size: 12px; color: var(--text2); margin-bottom: 6px; }
+  .card-meta { font-size: 12px; color: var(--text3); margin-bottom: 8px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 4px; }
+  .badge { font-size: 11px; padding: 2px 8px; background: var(--bg2); border-radius: 999px; color: var(--text2); }
+  .badge.cn { background: var(--green-bg); color: var(--green-dark); }
+
+  /* Empty state */
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); grid-column: 1/-1; }
+  .empty-icon { font-size: 36px; margin-bottom: 8px; }
+
+  /* Buttons */
+  .btn { padding: 7px 15px; font-size: 13px; font-weight: 500; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-family: 'DM Sans', sans-serif; white-space: nowrap; transition: opacity .15s; }
+  .btn:hover { opacity: .85; }
+  .btn-sec { padding: 7px 14px; font-size: 13px; background: transparent; border: .5px solid var(--border2); border-radius: var(--radius); cursor: pointer; font-family: 'DM Sans', sans-serif; color: var(--text); transition: background .15s; }
+  .btn-sec:hover { background: var(--bg2); }
+  .btn-green { background: var(--green); color: #fff; border: none; }
+  .back { font-size: 13px; color: var(--text2); cursor: pointer; margin-bottom: 1rem; display: inline-flex; align-items: center; gap: 4px; background: none; border: none; font-family: 'DM Sans', sans-serif; }
+  .back:hover { color: var(--text); }
+
+  /* Panel */
+  .panel { background: var(--bg3); border: .5px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; }
+  .panel-title { font-family: 'Lora', serif; font-size: 22px; margin-bottom: 2px; }
+  .panel-title-cn { font-size: 14px; color: var(--text2); margin-bottom: 4px; }
+  .panel-meta { font-size: 13px; color: var(--text3); margin-bottom: 1rem; }
+  .sec-lbl { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin: 1.1rem 0 .5rem; }
+
+  /* Ingredients */
+  .ing-list { list-style: none; }
+  .ing-list li { font-size: 14px; padding: 6px 0; border-bottom: .5px solid var(--border); display: flex; align-items: flex-start; gap: 8px; }
+  .ing-list li:last-child { border-bottom: none; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); flex-shrink: 0; margin-top: 6px; }
+  .ing-cn { font-size: 12px; color: var(--text2); margin-left: auto; padding-left: 12px; white-space: nowrap; }
+
+  /* Steps */
+  .steps { list-style: none; }
+  .step { display: flex; gap: 12px; padding: 10px 0; border-bottom: .5px solid var(--border); font-size: 14px; line-height: 1.65; }
+  .step:last-child { border-bottom: none; }
+  .step-num { font-family: 'Lora', serif; font-size: 18px; color: var(--text3); flex-shrink: 0; width: 20px; line-height: 1.4; }
+  .step-cn { font-size: 12px; color: var(--text2); margin-top: 3px; line-height: 1.6; }
+  .actions { display: flex; gap: 8px; margin-top: 1.25rem; flex-wrap: wrap; }
+
+  /* Add form */
+  .form { display: flex; flex-direction: column; gap: 12px; }
+  .lbl { font-size: 13px; font-weight: 500; margin-bottom: 3px; display: block; color: var(--text); }
+  .inp, .ta { width: 100%; padding: 8px 11px; font-size: 14px; border: .5px solid var(--border2); border-radius: var(--radius); background: var(--bg3); color: var(--text); font-family: 'DM Sans', sans-serif; outline: none; transition: border-color .15s; }
+  .inp:focus, .ta:focus { border-color: var(--green); }
+  .ta { min-height: 80px; resize: vertical; }
+  .ai-box { background: var(--bg2); border: .5px solid var(--border); border-radius: var(--radius); padding: 1rem; }
+  .ai-lbl { font-size: 12px; font-weight: 500; color: var(--green); margin-bottom: 5px; display: flex; align-items: center; gap: 5px; }
+  .ai-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+  .ai-hint { font-size: 12px; color: var(--text3); margin-top: 5px; line-height: 1.5; }
+  .divider { display: flex; align-items: center; gap: 9px; margin: 4px 0; }
+  .divider-line { flex: 1; height: .5px; background: var(--border); }
+  .divider-txt { font-size: 12px; color: var(--text3); white-space: nowrap; }
+  .bilingual-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media (max-width: 520px) { .bilingual-row { grid-template-columns: 1fr; } }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+  /* Cook mode */
+  .cook-wrap { max-width: 600px; }
+  .cook-step-box { background: var(--bg2); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 12px; }
+  .cook-num { font-family: 'Lora', serif; font-size: 48px; color: var(--text3); line-height: 1; margin-bottom: 10px; }
+  .cook-txt { font-size: 17px; line-height: 1.7; }
+  .cook-cn { font-size: 13px; color: var(--text2); margin-top: 6px; line-height: 1.6; }
+  .cook-prog { font-size: 12px; color: var(--text3); text-align: center; margin-top: 8px; }
+  .cook-ing { background: var(--bg2); border-radius: var(--radius); padding: .75rem 1rem; margin-bottom: 1rem; }
+  .cook-ing-title { font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--text3); margin-bottom: 6px; }
+
+  /* Modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 1rem; }
+  .modal { background: var(--bg3); border: .5px solid var(--border2); border-radius: var(--radius-lg); padding: 1.5rem; width: 100%; max-width: 460px; }
+  .modal-title { font-family: 'Lora', serif; font-size: 19px; margin-bottom: 1rem; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 8px 18px; border-radius: 999px; font-size: 13px; z-index: 200; opacity: 0; transition: opacity .3s; pointer-events: none; }
+  .toast.show { opacity: 1; }
+
+  /* Responsive */
+  @media (max-width: 600px) {
+    .hdr { flex-direction: column; align-items: flex-start; }
+    .grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 380px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="hdr-left">
+      <div class="hdr-title">My <em>Cookbook</em></div>
+      <span class="hdr-sub">我的食谱</span>
+    </div>
+    <div class="hdr-right">
+      <label class="lang-toggle">
+        <input type="checkbox" id="show-cn" checked onchange="renderAll()">
+        <span>显示中文</span>
+      </label>
+      <div class="tabs">
+        <button class="tab on" onclick="goTab('browse')">Browse</button>
+        <button class="tab" onclick="goTab('add')">+ 添加食谱</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BROWSE VIEW -->
+  <div id="v-browse">
+    <div class="search-row">
+      <input class="srch" id="srch" placeholder="搜索食材、菜名… / Search ingredient or dish name" oninput="renderGrid()">
+    </div>
+    <div class="itags" id="itags"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div id="v-detail" style="display:none">
+    <button class="back" onclick="goTab('browse')">← Back · 返回</button>
+    <div class="panel" id="detail"></div>
+  </div>
+
+  <!-- ADD VIEW -->
+  <div id="v-add" style="display:none">
+    <div class="panel">
+      <div class="panel-title">Add a Recipe</div>
+      <div class="panel-title-cn" style="margin-bottom:.8rem">添加新食谱</div>
+      <p style="font-size:13px;color:var(--text2);margin-bottom:1.1rem;line-height:1.6">
+        Paste Chinese or English text — Claude will parse and translate automatically.<br>
+        粘贴中文或英文食谱，Claude 会自动解析并翻译。
+      </p>
+      <div class="form">
+        <div class="ai-box">
+          <div class="ai-lbl"><div class="ai-dot"></div>AI Import · 智能导入</div>
+          <textarea class="ta" id="raw" style="background:var(--bg3)" placeholder="粘贴食谱原文（中文/英文均可）&#10;Paste raw recipe text — Chinese, English, or mixed...&#10;&#10;Example: 红烧肉：五花肉500g，生抽2勺，老抽1勺，冰糖30g，八角2个，桂皮1段。焯水后煎至金黄，加调料焖40分钟。4人份。"></textarea>
+          <div class="ai-hint">Supports Chinese recipe sites, English blogs, mixed text — Claude handles it all.<br>支持中文菜谱网站、英文食谱、混合文本均可。</div>
+        </div>
+        <button class="btn btn-green" id="ai-btn" onclick="doAI()">Parse with Claude · 智能解析</button>
+
+        <div class="divider"><div class="divider-line"></div><div class="divider-txt">or fill manually · 或手动填写</div><div class="divider-line"></div></div>
+
+        <div class="bilingual-row">
+          <div><label class="lbl">Recipe name (EN)</label><input class="inp" id="f-name" placeholder="e.g. Braised Pork Belly"></div>
+          <div><label class="lbl">菜名（中文）</label><input class="inp" id="f-name-cn" placeholder="如：红烧肉"></div>
+        </div>
+        <div class="grid-3">
+          <div><label class="lbl">Time (mins)</label><input class="inp" id="f-time" type="number" placeholder="40"></div>
+          <div><label class="lbl">Servings</label><input class="inp" id="f-srv" type="number" placeholder="4"></div>
+          <div><label class="lbl">Emoji</label><input class="inp" id="f-emoji" placeholder="🍖" style="font-size:18px"></div>
+        </div>
+        <div class="bilingual-row">
+          <div><label class="lbl">Ingredients (EN, one per line)</label><textarea class="ta" id="f-ing" placeholder="500g pork belly&#10;2 tbsp soy sauce&#10;30g rock sugar"></textarea></div>
+          <div><label class="lbl">食材（中文，每行一种）</label><textarea class="ta" id="f-ing-cn" placeholder="五花肉 500g&#10;生抽 2勺&#10;冰糖 30g"></textarea></div>
+        </div>
+        <div class="bilingual-row">
+          <div><label class="lbl">Steps (EN, one per line)</label><textarea class="ta" id="f-steps" placeholder="Blanch pork in boiling water 5 mins.&#10;Fry in pan until golden."></textarea></div>
+          <div><label class="lbl">步骤（中文，每行一步）</label><textarea class="ta" id="f-steps-cn" placeholder="五花肉焯水5分钟。&#10;煎至金黄。"></textarea></div>
+        </div>
+        <div><label class="lbl">Tags (comma separated · 中英文均可)</label><input class="inp" id="f-tags" placeholder="braised, 红烧, pork, 猪肉, quick"></div>
+        <button class="btn" onclick="saveRecipe()">Save Recipe · 保存食谱</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- COOK VIEW -->
+  <div id="v-cook" style="display:none">
+    <button class="back" onclick="stopCook()">← Back to recipe</button>
+    <div class="cook-wrap" id="cook-panel"></div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div id="modal" style="display:none">
+  <div class="modal-bg" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-title">Export · 导出</div>
+      <div id="modal-body" style="font-size:14px;margin-bottom:1rem;color:var(--text2);line-height:1.6"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" onclick="doExportHTML()">Download .html</button>
+        <button class="btn-sec" onclick="doPDF()">Save as PDF</button>
+        <button class="btn-sec" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+const KEY = 'cb_v3';
+let recipes = [], selIng = [], cur = null, cookIdx = 0;
+
+// ── Persistence ──────────────────────────────────────────
+function load() {
+  try { recipes = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch(e) { recipes = []; }
+  if (!recipes.length) recipes = samples();
+}
+function persist() { try { localStorage.setItem(KEY, JSON.stringify(recipes)); } catch(e) {} }
+
+// ── Sample data ───────────────────────────────────────────
+function samples() { return [
+  { id:1, name:'Braised Pork Belly', nameCN:'红烧肉', emoji:'🍖', time:60, srv:4,
+    ing:['500g pork belly','2 tbsp light soy sauce','1 tbsp dark soy sauce','30g rock sugar','2 star anise','1 cinnamon stick','3 cloves garlic','2 slices ginger'],
+    ingCN:['五花肉 500g','生抽 2勺','老抽 1勺','冰糖 30g','八角 2个','桂皮 1段','大蒜 3瓣','姜片 2片'],
+    steps:['Blanch pork belly in boiling water for 5 minutes, then cut into 3cm cubes.','Fry in a dry pan until golden brown on all sides.','Add soy sauces, rock sugar, spices and enough water to cover. Bring to boil.','Reduce to low heat, braise 40 minutes until tender and sauce thickens.'],
+    stepsCN:['五花肉冷水下锅，焯水5分钟去腥，切成3cm方块备用。','干锅中火煎至四面金黄上色。','加入生抽、老抽、冰糖、香料，加清水至没过肉，大火烧开。','转小火焖40分钟至肉酥软、汤汁收浓即可。'],
+    tags:['braised','红烧','pork','猪肉'] },
+  { id:2, name:'Egg Fried Rice', nameCN:'蛋炒饭', emoji:'🍳', time:15, srv:2,
+    ing:['2 cups day-old cooked rice','3 eggs','2 spring onions','2 tbsp soy sauce','1 tbsp sesame oil','1 tsp garlic paste'],
+    ingCN:['隔夜米饭 2碗','鸡蛋 3个','葱 2根','生抽 2勺','香油 1勺','蒜泥 1茶匙'],
+    steps:['Heat oil in a wok until smoking hot. Add garlic paste and stir briefly.','Add cold rice, break up any clumps, stir-fry 2 minutes.','Push rice to one side, scramble eggs on the other side, then mix together.','Add soy sauce and sesame oil. Toss to combine. Top with spring onions.'],
+    stepsCN:['热锅冷油，油烧至冒烟，下蒜泥爆香。','下隔夜米饭，翻炒2分钟打散结块。','米饭推到一边，另一边炒蛋，再混合翻炒。','加生抽、香油翻炒均匀，撒葱花出锅。'],
+    tags:['rice','饭','quick','快手'] },
+  { id:3, name:'Tomato & Egg Stir-fry', nameCN:'西红柿炒鸡蛋', emoji:'🍅', time:12, srv:2,
+    ing:['3 ripe tomatoes','3 eggs','2 tbsp cooking oil','1 tsp sugar','Salt to taste','Spring onion for garnish'],
+    ingCN:['西红柿 3个','鸡蛋 3个','食用油 2勺','白糖 1茶匙','盐 适量','葱花 少许'],
+    steps:['Beat eggs with a pinch of salt. Chop tomatoes into wedges.','Scramble eggs in hot oil until just set, then remove and set aside.','In the same pan, stir-fry tomatoes until soft and juicy, about 3 minutes.','Return eggs to pan. Add sugar and salt, toss everything together. Serve with rice.'],
+    stepsCN:['鸡蛋加盐打散，西红柿切块备用。','热锅下油，鸡蛋炒至半熟盛出备用。','原锅炒西红柿至出汁变软，约3分钟。','倒回鸡蛋，加糖、盐翻炒均匀，出锅即可。'],
+    tags:['家常','classic','vegetarian','素','quick'] }
+]; }
+
+// ── Helpers ───────────────────────────────────────────────
+function showCN() { return document.getElementById('show-cn').checked; }
+function isChinese(s) { return /[\u4e00-\u9fa5]/.test(s); }
+
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function show(id) {
+  ['v-browse','v-detail','v-add','v-cook'].forEach(v =>
+    document.getElementById(v).style.display = v === id ? '' : 'none');
+}
+
+function goTab(t) {
+  show(t === 'add' ? 'v-add' : t === 'browse' ? 'v-browse' : 'v-'+t);
+  document.querySelectorAll('.tab').forEach((el, i) =>
+    el.classList.toggle('on', (i===0 && t==='browse') || (i===1 && t==='add')));
+  if (t === 'browse') renderAll();
+}
+
+// ── Ingredient tags ───────────────────────────────────────
+function allIng() {
+  const s = new Set();
+  recipes.forEach(r => {
+    (r.ing||[]).forEach(i => {
+      const w = i.replace(/^[\d\s\/\.]+\w*\s*/, '').split(',')[0].trim().toLowerCase();
+      if (w.length > 2) s.add(w);
+    });
+    (r.ingCN||[]).forEach(i => {
+      const w = i.split(' ')[0].replace(/\d+/g, '').trim();
+      if (w.length >= 2) s.add(w);
+    });
+  });
+  return [...s].sort((a,b) => a.localeCompare(b));
+}
+
+function renderAll() { renderIngTags(); renderGrid(); }
+
+function renderIngTags() {
+  document.getElementById('itags').innerHTML = allIng().map(i =>
+    `<button class="itag${selIng.includes(i) ? ' on' : ''}" onclick="togIng('${i}')">${i}</button>`
+  ).join('');
+}
+
+function togIng(i) {
+  const x = selIng.indexOf(i);
+  x >= 0 ? selIng.splice(x, 1) : selIng.push(i);
+  renderIngTags(); renderGrid();
+}
+
+// ── Recipe grid ───────────────────────────────────────────
+function matches(r) {
+  const q = document.getElementById('srch').value.toLowerCase();
+  const allText = [r.name, r.nameCN, ...(r.ing||[]), ...(r.ingCN||[]), ...(r.tags||[])].join(' ').toLowerCase();
+  const txtOk = !q || allText.includes(q);
+  const ingOk = !selIng.length || selIng.every(s => allText.includes(s));
+  return txtOk && ingOk;
+}
+
+function renderGrid() {
+  const g = document.getElementById('grid');
+  const cn = showCN();
+  const vis = recipes.filter(matches);
+  if (!vis.length) {
+    g.innerHTML = '<div class="empty"><div class="empty-icon">📖</div><div>No recipes found · 未找到食谱<br><small style="color:var(--text3)">Try different filters or add a new recipe</small></div></div>';
+    return;
+  }
+  g.innerHTML = vis.map(r => `
+    <div class="card" onclick="showDetail(${r.id})">
+      <div class="card-emoji">${r.emoji||'🍴'}</div>
+      <div class="card-name">${r.name}</div>
+      ${cn && r.nameCN ? `<div class="card-name-cn">${r.nameCN}</div>` : ''}
+      <div class="card-meta">${r.time ? r.time+' min' : ''}${r.srv ? ' · '+r.srv+' servings' : ''}</div>
+      <div class="badges">${(r.tags||[]).map(t => `<span class="badge${isChinese(t)?' cn':''}">${t}</span>`).join('')}</div>
+    </div>`).join('');
+}
+
+// ── Detail view ───────────────────────────────────────────
+function showDetail(id) {
+  cur = recipes.find(r => r.id === id); if (!cur) return;
+  const cn = showCN();
+  document.getElementById('detail').innerHTML = `
+    <div style="font-size:34px;margin-bottom:8px">${cur.emoji||'🍴'}</div>
+    <div class="panel-title">${cur.name}</div>
+    ${cn && cur.nameCN ? `<div class="panel-title-cn">${cur.nameCN}</div>` : ''}
+    <div class="panel-meta">${cur.time ? cur.time+' min' : ''}${cur.srv ? ' · '+cur.srv+' servings' : ''}</div>
+    <div class="badges" style="margin-bottom:.9rem">${(cur.tags||[]).map(t=>`<span class="badge${isChinese(t)?' cn':''}">${t}</span>`).join('')}</div>
+
+    <div class="sec-lbl">Ingredients${cn&&cur.ingCN?' · 食材':''}</div>
+    <ul class="ing-list">${(cur.ing||[]).map((ing,x) => `
+      <li><div class="dot"></div><span>${ing}</span>
+        ${cn && cur.ingCN && cur.ingCN[x] ? `<span class="ing-cn">${cur.ingCN[x]}</span>` : ''}
+      </li>`).join('')}
+    </ul>
+
+    <div class="sec-lbl">Method${cn&&cur.stepsCN?' · 步骤':''}</div>
+    <ol class="steps">${(cur.steps||[]).map((s,x) => `
+      <li class="step">
+        <span class="step-num">${x+1}</span>
+        <div>
+          <div>${s}</div>
+          ${cn && cur.stepsCN && cur.stepsCN[x] ? `<div class="step-cn">${cur.stepsCN[x]}</div>` : ''}
+        </div>
+      </li>`).join('')}
+    </ol>
+
+    <div class="actions">
+      <button class="btn btn-green" onclick="startCook()">Cook mode · 烹饪模式</button>
+      <button class="btn-sec" onclick="openModal()">Export · 导出</button>
+      <button class="btn-sec" onclick="delRecipe(${cur.id})">Delete</button>
+    </div>`;
+  show('v-detail');
+}
+
+// ── Cook mode ─────────────────────────────────────────────
+function startCook() { cookIdx = 0; show('v-cook'); renderCook(); }
+function stopCook() { show('v-detail'); showDetail(cur.id); }
+
+function renderCook() {
+  const steps = cur.steps || [];
+  const cn = showCN();
+  const isLast = cookIdx >= steps.length - 1;
+  document.getElementById('cook-panel').innerHTML = `
+    <div style="font-size:13px;color:var(--text2);margin-bottom:.8rem">${cur.emoji} ${cur.name}${cn&&cur.nameCN?' · '+cur.nameCN:''}</div>
+    <div class="cook-ing">
+      <div class="cook-ing-title">Ingredients · 食材</div>
+      <div style="font-size:13px;color:var(--text2);line-height:1.8">${(cur.ing||[]).map((ing,x) =>
+        `${ing}${cn&&cur.ingCN&&cur.ingCN[x]?' <span style="color:var(--text3)">· '+cur.ingCN[x]+'</span>':''}`
+      ).join(' &nbsp;·&nbsp; ')}</div>
+    </div>
+    <div class="cook-step-box">
+      <div class="cook-num">${cookIdx+1}</div>
+      <div class="cook-txt">${steps[cookIdx]}</div>
+      ${cn && cur.stepsCN && cur.stepsCN[cookIdx] ? `<div class="cook-cn">${cur.stepsCN[cookIdx]}</div>` : ''}
+    </div>
+    <div class="cook-prog">Step ${cookIdx+1} of ${steps.length}</div>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      ${cookIdx > 0 ? `<button class="btn-sec" onclick="cookIdx--;renderCook()">← Prev</button>` : ''}
+      ${isLast
+        ? `<button class="btn btn-green" onclick="stopCook()">✓ Done!</button>`
+        : `<button class="btn" onclick="cookIdx++;renderCook()">Next →</button>`}
+    </div>`;
+}
+
+// ── AI Import ─────────────────────────────────────────────
+async function doAI() {
+  const raw = document.getElementById('raw').value.trim();
+  if (!raw) { toast('Please paste some recipe text first · 请先粘贴食谱文字'); return; }
+  const btn = document.getElementById('ai-btn');
+  btn.textContent = 'Parsing… 解析中…'; btn.disabled = true;
+
+  const prompt = `Extract a recipe from the text below and return ONLY a valid JSON object with these exact fields:
+- name: English name (string)
+- nameCN: Chinese name (string, translate if not present)
+- emoji: one relevant food emoji (string)
+- time: estimated cook time in minutes (number)
+- srv: servings (number)
+- ing: array of English ingredient strings with quantities
+- ingCN: array of Chinese ingredient strings in same order as ing (translate if needed)
+- steps: array of English cooking step strings (clear, actionable)
+- stepsCN: array of Chinese cooking step strings in same order as steps (translate if needed)
+- tags: array of 3-6 tags mixing Chinese and English (e.g. ["braised","红烧","pork","猪肉"])
+
+Text:
+${raw}
+
+Return ONLY valid JSON. No markdown, no backticks, no preamble, no explanation.`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const d = await res.json();
+    const txt = d.content.map(c => c.text || '').join('');
+    const p = JSON.parse(txt.replace(/```json|```/g, '').trim());
+    document.getElementById('f-name').value = p.name || '';
+    document.getElementById('f-name-cn').value = p.nameCN || '';
+    document.getElementById('f-emoji').value = p.emoji || '';
+    document.getElementById('f-time').value = p.time || '';
+    document.getElementById('f-srv').value = p.srv || '';
+    document.getElementById('f-ing').value = (p.ing || []).join('\n');
+    document.getElementById('f-ing-cn').value = (p.ingCN || []).join('\n');
+    document.getElementById('f-steps').value = (p.steps || []).join('\n');
+    document.getElementById('f-steps-cn').value = (p.stepsCN || []).join('\n');
+    document.getElementById('f-tags').value = (p.tags || []).join(', ');
+    document.getElementById('raw').value = '';
+    btn.textContent = '✓ Parsed! Review below & save · 已解析，请检查后保存';
+    btn.style.background = '#1D9E75'; btn.disabled = false;
+  } catch(e) {
+    toast('Parsing failed — try simplifying the text · 解析失败，请简化文字后重试');
+    btn.textContent = 'Parse with Claude · 智能解析';
+    btn.style.background = ''; btn.disabled = false;
+  }
+}
+
+// ── Save recipe ───────────────────────────────────────────
+function saveRecipe() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { toast('Please enter a recipe name · 请输入菜名'); return; }
+  const r = {
+    id: Date.now(),
+    name, nameCN: document.getElementById('f-name-cn').value.trim(),
+    emoji: document.getElementById('f-emoji').value.trim() || '🍴',
+    time: parseInt(document.getElementById('f-time').value) || null,
+    srv: parseInt(document.getElementById('f-srv').value) || null,
+    ing: document.getElementById('f-ing').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    ingCN: document.getElementById('f-ing-cn').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    steps: document.getElementById('f-steps').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    stepsCN: document.getElementById('f-steps-cn').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    tags: document.getElementById('f-tags').value.split(',').map(s=>s.trim()).filter(Boolean)
+  };
+  recipes.push(r); persist();
+  ['f-name','f-name-cn','f-emoji','f-time','f-srv','f-ing','f-ing-cn','f-steps','f-steps-cn','f-tags','raw'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const btn = document.getElementById('ai-btn');
+  btn.textContent = 'Parse with Claude · 智能解析'; btn.style.background = '';
+  toast('Recipe saved! · 食谱已保存 ✓');
+  goTab('browse');
+}
+
+function delRecipe(id) {
+  if (!confirm('Delete this recipe? · 确定删除此食谱？')) return;
+  recipes = recipes.filter(r => r.id !== id); persist();
+  toast('Deleted · 已删除');
+  goTab('browse');
+}
+
+// ── Export ────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('modal-body').innerHTML = `Export <strong>${cur.name}</strong>${cur.nameCN?' ('+cur.nameCN+')':''} as a self-contained HTML file, or open the print dialog to save as PDF.`;
+  document.getElementById('modal').style.display = '';
+}
+function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+function buildExportHTML(r, bilingual) {
+  return `<!DOCTYPE html>
+<html lang="zh"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${r.name}${r.nameCN?' · '+r.nameCN:''}</title>
+<style>
+  body{font-family:Georgia,serif;max-width:700px;margin:60px auto;padding:0 24px;color:#1a1a1a;line-height:1.7;background:#fafaf8}
+  h1{font-size:32px;font-weight:400;margin-bottom:4px}
+  .cn{color:#888;font-size:15px;margin-bottom:4px}
+  .meta{color:#999;font-size:14px;margin-bottom:20px}
+  h2{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#aaa;margin:28px 0 10px;font-weight:400;border-top:1px solid #eee;padding-top:12px}
+  .ing-row{display:flex;gap:40px}
+  .ing-col{flex:1}
+  ul{padding-left:18px}
+  li{margin-bottom:7px;font-size:15px}
+  .step{display:flex;gap:14px;margin-bottom:14px}
+  .sn{font-family:Georgia,serif;font-size:24px;color:#ccc;min-width:24px;line-height:1.3}
+  .scn{font-size:13px;color:#aaa;margin-top:3px}
+  .tag{display:inline-block;padding:2px 10px;border:1px solid #ddd;border-radius:999px;font-size:12px;margin:2px 2px 0 0}
+  .emoji{font-size:40px;margin-bottom:10px}
+  @media print{body{margin:30px auto}}
+</style></head><body>
+<div class="emoji">${r.emoji||'🍴'}</div>
+<h1>${r.name}</h1>
+${r.nameCN?`<div class="cn">${r.nameCN}</div>`:''}
+<div class="meta">${r.time?r.time+' min':''}${r.srv?' · '+r.srv+' servings':''}</div>
+<div>${(r.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+<h2>Ingredients${bilingual&&r.ingCN?' · 食材':''}</h2>
+${bilingual && r.ingCN && r.ingCN.length
+  ? `<div class="ing-row"><div class="ing-col"><ul>${(r.ing||[]).map(i=>`<li>${i}</li>`).join('')}</ul></div><div class="ing-col"><ul>${(r.ingCN||[]).map(i=>`<li>${i}</li>`).join('')}</ul></div></div>`
+  : `<ul>${(r.ing||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`}
+<h2>Method${bilingual&&r.stepsCN?' · 步骤':''}</h2>
+${(r.steps||[]).map((s,i)=>`
+<div class="step"><span class="sn">${i+1}</span><div><div>${s}</div>${bilingual&&r.stepsCN&&r.stepsCN[i]?`<div class="scn">${r.stepsCN[i]}</div>`:''}</div></div>`).join('')}
+</body></html>`;
+}
+
+function doExportHTML() {
+  const html = buildExportHTML(cur, showCN());
+  const a = document.createElement('a');
+  a.href = 'data:text/html;charset=utf-8,' + encodeURIComponent(html);
+  a.download = (cur.nameCN || cur.name).replace(/[\s\/\\:*?"<>|]/g, '-') + '.html';
+  a.click(); closeModal();
+}
+
+function doPDF() {
+  const w = window.open('', '_blank');
+  w.document.write(buildExportHTML(cur, showCN()));
+  w.document.close(); w.print(); closeModal();
+}
+
+// ── Boot ─────────────────────────────────────────────────
+load(); goTab('browse');
+</script>
+</body>
+</html>
