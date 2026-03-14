@@ -224,16 +224,34 @@
     <div class="panel">
       <div class="panel-title">Add a Recipe</div>
       <div class="panel-title-cn" style="margin-bottom:.8rem">添加新食谱</div>
-      <p style="font-size:13px;color:var(--text2);margin-bottom:1.1rem;line-height:1.6">
-        Paste Chinese or English text — Claude will parse and translate automatically.<br>
-        粘贴中文或英文食谱，Claude 会自动解析并翻译。
-      </p>
       <div class="form">
+
+        <!-- PRIMARY: Photo Upload -->
         <div class="ai-box">
-          <div class="ai-lbl"><div class="ai-dot"></div>AI Import · 智能导入</div>
-          <textarea class="ta" id="raw" style="background:var(--bg3)" placeholder="粘贴食谱原文（中文/英文均可）&#10;Paste raw recipe text — Chinese, English, or mixed...&#10;&#10;Example: 红烧肉：五花肉500g，生抽2勺，老抽1勺，冰糖30g，八角2个，桂皮1段。焯水后煎至金黄，加调料焖40分钟。4人份。"></textarea>
-          <div class="ai-hint">Supports Chinese recipe sites, English blogs, mixed text — Claude handles it all.<br>支持中文菜谱网站、英文食谱、混合文本均可。</div>
+          <div class="ai-lbl"><div class="ai-dot"></div>📷 Photo Import · 图片导入（推荐）</div>
+          <div id="drop-zone" onclick="document.getElementById('img-upload').click()"
+            style="border:1.5px dashed var(--border2);border-radius:var(--radius);padding:2rem 1rem;text-align:center;cursor:pointer;transition:background .15s;margin-bottom:8px">
+            <div style="font-size:36px;margin-bottom:8px">📷</div>
+            <div style="font-size:14px;font-weight:500;margin-bottom:4px">Click to upload recipe photos · 点击上传食谱图片</div>
+            <div style="font-size:12px;color:var(--text3)">Supports multiple screenshots · 支持多张截图 (WeChat, Sam's Club, 小红书…)</div>
+            <input type="file" id="img-upload" accept="image/*" multiple style="display:none" onchange="handleImgUpload(event)">
+          </div>
+          <!-- Preview thumbnails -->
+          <div id="img-preview" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px"></div>
+          <div class="ai-hint">Take screenshots of any recipe page and upload here — Claude reads the images directly.<br>截图任意食谱页面上传，Claude 会自动识别食材和步骤。</div>
         </div>
+
+        <!-- SECONDARY: Text paste (collapsed by default) -->
+        <div>
+          <button onclick="toggleText()" id="text-toggle-btn"
+            style="font-size:12px;color:var(--text2);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:3px">
+            + Or paste text instead · 或粘贴文字
+          </button>
+          <div id="text-area-wrap" style="display:none;margin-top:8px">
+            <textarea class="ta" id="raw" style="background:var(--bg3)" placeholder="粘贴食谱原文（中文/英文均可）&#10;Paste raw recipe text — Chinese, English, or mixed..."></textarea>
+          </div>
+        </div>
+
         <button class="btn btn-green" id="ai-btn" onclick="doAI()">Parse with Claude · 智能解析</button>
 
         <div class="divider"><div class="divider-line"></div><div class="divider-txt">or fill manually · 或手动填写</div><div class="divider-line"></div></div>
@@ -316,7 +334,13 @@ function samples() { return [
     ingCN:['西红柿 3个','鸡蛋 3个','食用油 2勺','白糖 1茶匙','盐 适量','葱花 少许'],
     steps:['Beat eggs with a pinch of salt. Chop tomatoes into wedges.','Scramble eggs in hot oil until just set, then remove and set aside.','In the same pan, stir-fry tomatoes until soft and juicy, about 3 minutes.','Return eggs to pan. Add sugar and salt, toss everything together. Serve with rice.'],
     stepsCN:['鸡蛋加盐打散，西红柿切块备用。','热锅下油，鸡蛋炒至半熟盛出备用。','原锅炒西红柿至出汁变软，约3分钟。','倒回鸡蛋，加糖、盐翻炒均匀，出锅即可。'],
-    tags:['家常','classic','vegetarian','素','quick'] }
+    tags:['家常','classic','vegetarian','素','quick'] },
+  { id:4, name:'Tomato Sour Soup Fish', nameCN:'番茄酸汤鱼', emoji:'🐟', time:30, srv:2,
+    ing:['200g crispy tilapia fillets','2 highland tomatoes','30g fried tofu skin (腐竹)','1 egg white','Spring onion, ginger, garlic to taste','1 pack tamarillo hot pot seasoning','Cooking wine to taste','White pepper powder to taste','Cornstarch to taste','Salt to taste'],
+    ingCN:['脆鲷鱼片 200g','MM高山粉茄 2个','炸腐竹 30g','鸡蛋 1个（取蛋清）','葱、姜、蒜 少许','树番茄火锅底料 1包','料酒 适量','白胡椒粉 适量','淀粉 适量','盐 适量'],
+    steps:['Prepare all ingredients: rinse fish fillets, tomatoes and tofu skin.','Shred ginger and slice spring onion.','Marinate fish with spring onion, ginger, cooking wine, white pepper, salt, egg white and cornstarch. Mix well and set aside for 10 minutes.','Dice tomatoes. Heat oil in a pot, stir-fry spring onion, ginger and garlic until fragrant. Add tomatoes and cook until juicy.','Add tamarillo hot pot seasoning and enough water to just cover all ingredients. Bring to a boil.','Once boiling, add tofu skin and cook for 2 minutes.','Add marinated fish fillets, simmer 5 minutes. Garnish with spring onion and serve.'],
+    stepsCN:['备好所有食材：鱼片、番茄、腐竹洗净备用。','生姜切丝，大葱切片。','鱼片加入葱、姜、料酒、白胡椒粉、盐、蛋清、淀粉，抓拌均匀，腌制10分钟。','番茄切块，锅中油热炒香葱、姜、蒜，下入番茄炒至出汁。','加入树番茄火锅底料，加水直至刚刚没过食材，大火煮开。','水开后下入腐竹，煮2分钟。','下入腌好的鱼片，炖煮5分钟，撒上葱花即可出锅。'],
+    tags:['汤','soup','fish','鱼','酸汤','tomato'] }
 ]; }
 
 // ── Helpers ───────────────────────────────────────────────
@@ -467,12 +491,13 @@ function renderCook() {
 
 // ── AI Import ─────────────────────────────────────────────
 async function doAI() {
-  const raw = document.getElementById('raw').value.trim();
-  if (!raw) { toast('Please paste some recipe text first · 请先粘贴食谱文字'); return; }
+  const raw = document.getElementById('raw') ? document.getElementById('raw').value.trim() : '';
+  const hasImages = uploadedImages.length > 0;
+  if (!raw && !hasImages) { toast('Please upload photos or paste text · 请上传图片或粘贴文字'); return; }
   const btn = document.getElementById('ai-btn');
   btn.textContent = 'Parsing… 解析中…'; btn.disabled = true;
 
-  const prompt = `Extract a recipe from the text below and return ONLY a valid JSON object with these exact fields:
+  const prompt = `Extract a recipe from the content below (may include text and/or food/recipe images) and return ONLY a valid JSON object with these exact fields:
 - name: English name (string)
 - nameCN: Chinese name (string, translate if not present)
 - emoji: one relevant food emoji (string)
@@ -509,7 +534,13 @@ Return ONLY valid JSON. No markdown, no backticks, no preamble, no explanation.`
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }]
+        messages: [{ role: 'user', content: hasImages
+          ? [
+              ...uploadedImages.map(img => ({ type: 'image', source: { type: 'base64', media_type: img.mediaType, data: img.data } })),
+              ...(raw ? [{ type: 'text', text: prompt + '\n\nAdditional text: ' + raw }] : [{ type: 'text', text: prompt }])
+            ]
+          : prompt
+        }]
       })
     });
     const d = await res.json();
@@ -525,7 +556,15 @@ Return ONLY valid JSON. No markdown, no backticks, no preamble, no explanation.`
     document.getElementById('f-steps').value = (p.steps || []).join('\n');
     document.getElementById('f-steps-cn').value = (p.stepsCN || []).join('\n');
     document.getElementById('f-tags').value = (p.tags || []).join(', ');
-    document.getElementById('raw').value = '';
+    const rawEl = document.getElementById('raw'); if (rawEl) rawEl.value = '';
+    uploadedImages = [];
+    document.getElementById('img-upload').value = '';
+    document.getElementById('img-preview').innerHTML = '';
+    const dz = document.getElementById('drop-zone');
+    if (dz) {
+      dz.style.background = '';
+      dz.querySelector('div:nth-child(2)').textContent = 'Click to upload recipe photos · 点击上传食谱图片';
+    }
     btn.textContent = '✓ Parsed! Review below & save · 已解析，请检查后保存';
     btn.style.background = '#1D9E75'; btn.disabled = false;
   } catch(e) {
@@ -623,6 +662,52 @@ function doPDF() {
   const w = window.open('', '_blank');
   w.document.write(buildExportHTML(cur, showCN()));
   w.document.close(); w.print(); closeModal();
+}
+
+// ── Image upload ─────────────────────────────────────────
+let uploadedImages = [];
+
+function toggleText() {
+  const wrap = document.getElementById('text-area-wrap');
+  const btn = document.getElementById('text-toggle-btn');
+  const hidden = wrap.style.display === 'none';
+  wrap.style.display = hidden ? '' : 'none';
+  btn.textContent = hidden ? '− Hide text box · 收起文字框' : '+ Or paste text instead · 或粘贴文字';
+}
+
+function handleImgUpload(event) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  uploadedImages = [];
+  const preview = document.getElementById('img-preview');
+  const dz = document.getElementById('drop-zone');
+  preview.innerHTML = '';
+  let loaded = 0;
+  files.forEach((file, idx) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const dataUrl = e.target.result;
+      uploadedImages.push({ mediaType: file.type || 'image/jpeg', data: dataUrl.split(',')[1] });
+      loaded++;
+      // thumbnail
+      const thumb = document.createElement('div');
+      thumb.style.cssText = 'position:relative;width:72px;height:72px;border-radius:8px;overflow:hidden;border:.5px solid var(--border2)';
+      const img = document.createElement('img');
+      img.src = dataUrl;
+      img.style.cssText = 'width:100%;height:100%;object-fit:cover';
+      const badge = document.createElement('div');
+      badge.style.cssText = 'position:absolute;bottom:2px;right:3px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:1px 4px;border-radius:4px';
+      badge.textContent = idx+1;
+      thumb.appendChild(img); thumb.appendChild(badge);
+      preview.appendChild(thumb);
+      // update drop zone label
+      if (loaded === files.length) {
+        dz.style.background = 'var(--green-bg)';
+        dz.querySelector('div:nth-child(2)').textContent = loaded + ' photo' + (loaded>1?'s':'') + ' ready to parse · ' + loaded + '张图片已就绪';
+      }
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 // ── API Key ───────────────────────────────────────────────
