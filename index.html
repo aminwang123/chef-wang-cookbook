@@ -467,7 +467,11 @@ Return ONLY valid JSON. No markdown, no backticks, no preamble, no explanation.`
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+    'Content-Type': 'application/json',
+    'x-api-key': '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',
+    'anthropic-version': '2023-06-01'
+},
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 2000,
