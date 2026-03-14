@@ -149,6 +149,19 @@
   .toast { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 8px 18px; border-radius: 999px; font-size: 13px; z-index: 200; opacity: 0; transition: opacity .3s; pointer-events: none; }
   .toast.show { opacity: 1; }
 
+  /* API key banner */
+  .api-banner { background: #fef3cd; border: .5px solid #f0c040; border-radius: var(--radius); padding: .7rem 1rem; margin-bottom: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .api-banner.ok { background: var(--green-bg); border-color: var(--green-dark); }
+  .api-banner-txt { font-size: 13px; color: #7a5c00; }
+  .api-banner.ok .api-banner-txt { color: var(--green-dark); }
+  .api-key-row { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; margin-top: 6px; }
+  .inp-key { flex: 1; min-width: 220px; padding: 6px 10px; font-size: 13px; border: .5px solid var(--border2); border-radius: var(--radius); background: var(--bg3); color: var(--text); font-family: 'DM Sans', sans-serif; font-family: monospace; }
+  .btn-sm { padding: 6px 12px; font-size: 12px; font-weight: 500; background: var(--text); color: var(--bg); border: none; border-radius: var(--radius); cursor: pointer; font-family: 'DM Sans', sans-serif; }
+  @media (prefers-color-scheme: dark) {
+    .api-banner { background: #3a2e00; border-color: #7a6010; }
+    .api-banner-txt { color: #f0c040; }
+  }
+
   /* Responsive */
   @media (max-width: 600px) {
     .hdr { flex-direction: column; align-items: flex-start; }
@@ -175,6 +188,18 @@
       <div class="tabs">
         <button class="tab on" onclick="goTab('browse')">Browse</button>
         <button class="tab" onclick="goTab('add')">+ 添加食谱</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- API Key Banner -->
+  <div id="api-banner" class="api-banner" style="display:none">
+    <div>
+      <div class="api-banner-txt" id="api-banner-txt">⚠️ Add your Anthropic API key to enable AI import · 请输入 Anthropic API 密钥以启用智能导入</div>
+      <div class="api-key-row">
+        <input class="inp-key" id="api-key-inp" type="password" placeholder="sk-ant-api03-..." autocomplete="off">
+        <button class="btn-sm" onclick="saveKey()">Save · 保存</button>
+        <button class="btn-sm" style="background:transparent;color:var(--text2);border:.5px solid var(--border2)" onclick="clearKey()">Clear</button>
       </div>
     </div>
   </div>
@@ -465,13 +490,22 @@ ${raw}
 Return ONLY valid JSON. No markdown, no backticks, no preamble, no explanation.`;
 
   try {
+    const apiKey = getKey();
+    if (!apiKey) {
+      toast('Please enter your API key first · 请先输入 API 密钥');
+      btn.textContent = 'Parse with Claude · 智能解析'; btn.disabled = false;
+      document.getElementById('api-banner').style.display = '';
+      document.getElementById('api-key-inp').focus();
+      return;
+    }
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-    'Content-Type': 'application/json',
-    'x-api-key': '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',
-    'anthropic-version': '2023-06-01'
-},
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 2000,
@@ -591,8 +625,36 @@ function doPDF() {
   w.document.close(); w.print(); closeModal();
 }
 
+// ── API Key ───────────────────────────────────────────────
+const KEY_STORE = 'cb_apikey';
+function getKey() { try { return localStorage.getItem(KEY_STORE) || ''; } catch(e) { return ''; } }
+function saveKey() {
+  const v = document.getElementById('api-key-inp').value.trim();
+  if (!v.startsWith('sk-ant-')) { toast('Invalid key — should start with sk-ant- · 密钥格式有误'); return; }
+  try { localStorage.setItem(KEY_STORE, v); } catch(e) {}
+  document.getElementById('api-key-inp').value = '';
+  updateBanner();
+  toast('API key saved ✓ · 密钥已保存');
+}
+function clearKey() {
+  try { localStorage.removeItem(KEY_STORE); } catch(e) {}
+  updateBanner();
+  toast('API key cleared · 密钥已清除');
+}
+function updateBanner() {
+  const banner = document.getElementById('api-banner');
+  const txt = document.getElementById('api-banner-txt');
+  const hasKey = !!getKey();
+  banner.style.display = '';
+  banner.classList.toggle('ok', hasKey);
+  txt.textContent = hasKey
+    ? '✓ API key saved — AI import is ready · API 密钥已保存，智能导入已启用'
+    : '⚠️ Add your Anthropic API key to enable AI import · 请输入 Anthropic API 密钥以启用智能导入';
+  if (hasKey) document.getElementById('api-key-inp').placeholder = '(key saved — enter new key to replace)';
+}
+
 // ── Boot ─────────────────────────────────────────────────
-load(); goTab('browse');
+load(); goTab('browse'); updateBanner();
 </script>
 </body>
 </html>
