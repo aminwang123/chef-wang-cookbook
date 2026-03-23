@@ -1,0 +1,10 @@
+# Tell Railway's Nixpacks to install Python and build tools
+# needed to compile better-sqlite3 from source on Linux
+[phases.setup]
+nixPkgs = ["python3", "gcc", "gnumake", "nodejs_22"]
+
+[phases.install]
+cmds = ["npm install --build-from-source"]
+
+[start]
+cmd = "node server.js"
