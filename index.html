@@ -1,738 +1,482 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chef Wang — Kitchen & Cuisine</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-:root {
-  --orange: #E8650A;
-  --orange2: #F07830;
-  --orange-light: #FDF0E8;
-  --dark: #4A4A4A;
-  --mid: #9A9A9A;
-  --light: #D8D8D8;
-  --lighter: #F4F4F4;
-  --white: #FFFFFF;
-  --shadow: rgba(0,0,0,0.08);
-  --shadow-o: rgba(232,101,10,0.18);
-  --font: 'Montserrat', sans-serif;
-  --r: 12px; --rs: 8px;
-}
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--font);background:var(--lighter);color:var(--dark);min-height:100vh}
-
-/* HEADER */
-.hdr{background:var(--white);border-bottom:3px solid var(--orange);padding:0 2rem;position:sticky;top:0;z-index:200;box-shadow:0 2px 20px var(--shadow)}
-.hdr-in{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:72px;gap:1.5rem}
-.logo{display:flex;align-items:center;gap:14px;flex-shrink:0}
-.logo-icon{width:46px;height:46px;flex-shrink:0}
-.logo-name{font-size:20px;font-weight:800;letter-spacing:.04em;color:var(--dark);line-height:1;display:block}
-.logo-sub{font-size:9px;font-weight:400;letter-spacing:.25em;text-transform:uppercase;color:var(--mid);display:block;margin-top:2px}
-.nav{display:flex;gap:4px}
-.nav-btn{font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:8px 18px;border-radius:6px;border:2px solid transparent;cursor:pointer;background:none;color:var(--mid);transition:all .2s}
-.nav-btn:hover{color:var(--orange);background:var(--orange-light)}
-.nav-btn.on{color:var(--white);background:var(--orange);border-color:var(--orange)}
-.api-pill{font-family:var(--font);font-size:10px;font-weight:700;letter-spacing:.08em;padding:5px 12px;border-radius:20px;border:1.5px solid var(--light);color:var(--mid);cursor:pointer;background:transparent;transition:all .2s;flex-shrink:0}
-.api-pill.ok{border-color:#4CAF50;color:#4CAF50}
-.api-pill:hover{border-color:var(--orange);color:var(--orange)}
-
-/* LAYOUT */
-.main{max-width:1280px;margin:0 auto;padding:2rem}
-.view{display:none}.view.on{display:block}
-
-/* BUTTONS */
-.btn{font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 22px;border-radius:var(--rs);border:2px solid transparent;cursor:pointer;transition:all .2s;display:inline-flex;align-items:center;gap:7px}
-.btn-orange{background:var(--orange);color:var(--white);border-color:var(--orange)}
-.btn-orange:hover{background:var(--orange2);border-color:var(--orange2);transform:translateY(-1px);box-shadow:0 4px 16px var(--shadow-o)}
-.btn-outline{background:transparent;color:var(--orange);border-color:var(--orange)}
-.btn-outline:hover{background:var(--orange);color:var(--white)}
-.btn-ghost{background:transparent;color:var(--mid);border-color:var(--light)}
-.btn-ghost:hover{border-color:var(--mid);color:var(--dark)}
-.btn-sm{padding:7px 14px;font-size:11px}
-.btn-icon{width:38px;height:38px;padding:0;justify-content:center;border-radius:var(--rs)}
-
-/* PAGE HEADER */
-.ph{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem}
-.ph-title{font-size:28px;font-weight:800;color:var(--dark);letter-spacing:-.02em}
-.ph-title span{color:var(--orange)}
-.ph-sub{font-size:13px;font-weight:500;color:var(--mid);margin-top:3px}
-
-/* CARD */
-.card{background:var(--white);border-radius:var(--r);box-shadow:0 2px 12px var(--shadow);overflow:hidden}
-
-/* TAG */
-.tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1.5px solid var(--light);color:var(--mid);background:var(--lighter);cursor:pointer;transition:all .2s}
-.tag.on,.tag:hover{background:var(--orange);border-color:var(--orange);color:var(--white)}
-
-/* TOAST */
-.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--dark);color:var(--white);font-size:13px;font-weight:600;padding:10px 22px;border-radius:25px;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25)}
-.toast.show{opacity:1}
-
-/* ───── COLLECTION ───── */
-.ctrl-row{display:flex;gap:10px;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap}
-.srch-box{flex:1;min-width:200px;max-width:380px;display:flex;align-items:center;gap:10px;background:var(--white);border:2px solid var(--light);border-radius:var(--rs);padding:8px 14px;transition:all .2s}
-.srch-box:focus-within{border-color:var(--orange);box-shadow:0 0 0 3px var(--shadow-o)}
-.srch-box svg{color:var(--mid);flex-shrink:0;width:16px;height:16px}
-.srch-box input{border:none;outline:none;background:none;font-family:var(--font);font-size:14px;font-weight:500;color:var(--dark);width:100%}
-.srch-box input::placeholder{color:var(--mid);font-weight:400}
-.tag-bar{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1.75rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.25rem}
-.rc{cursor:pointer;transition:all .2s;animation:fadeUp .35s ease both}
-.rc:hover{transform:translateY(-4px);box-shadow:0 12px 36px var(--shadow)}
-.rc-top{background:linear-gradient(135deg,var(--orange-light) 0%,#FFF8F3 100%);padding:1.5rem;display:flex;align-items:flex-start;justify-content:space-between}
-.rc-emoji{font-size:42px;line-height:1}
-.rc-badge{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--orange);color:var(--white);padding:4px 10px;border-radius:20px}
-.rc-body{padding:1.25rem}
-.rc-name{font-size:17px;font-weight:800;color:var(--dark);letter-spacing:-.01em;margin-bottom:3px;line-height:1.2}
-.rc-cn{font-size:13px;font-weight:500;color:var(--mid);margin-bottom:.8rem}
-.rc-meta{display:flex;gap:12px;margin-bottom:.9rem}
-.mc{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600;color:var(--mid)}
-.mc svg{width:13px;height:13px;color:var(--orange)}
-.rc-tags{display:flex;flex-wrap:wrap;gap:5px}
-.rc-foot{padding:.9rem 1.25rem;border-top:1px solid var(--lighter);display:flex;justify-content:space-between;align-items:center}
-.rc-link{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);display:flex;align-items:center;gap:5px}
-.empty{grid-column:1/-1;text-align:center;padding:4rem 2rem}
-.empty-ico{font-size:56px;margin-bottom:1rem}
-.empty-t{font-size:20px;font-weight:700;color:var(--dark);margin-bottom:.4rem}
-.empty-s{font-size:14px;font-weight:400;color:var(--mid)}
-
-/* ───── DETAIL ───── */
-.dh{background:linear-gradient(135deg,var(--orange) 0%,var(--orange2) 100%);border-radius:var(--r);padding:2.5rem;color:var(--white);margin-bottom:1.5rem;position:relative;overflow:hidden}
-.dh::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
-.dh::after{content:'';position:absolute;right:60px;bottom:-60px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.05)}
-.dback{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.8);background:rgba(255,255,255,.15);border:none;padding:6px 14px;border-radius:20px;cursor:pointer;transition:all .2s;margin-bottom:1.5rem;font-family:var(--font)}
-.dback:hover{background:rgba(255,255,255,.25);color:var(--white)}
-.d-emoji{font-size:56px;margin-bottom:.8rem;display:block;position:relative;z-index:1}
-.d-name{font-size:clamp(28px,5vw,44px);font-weight:800;letter-spacing:-.02em;line-height:1;margin-bottom:.3rem;position:relative;z-index:1}
-.d-cn{font-size:18px;font-weight:400;opacity:.85;margin-bottom:1.5rem;position:relative;z-index:1}
-.d-meta-row{display:flex;gap:2rem;flex-wrap:wrap;position:relative;z-index:1}
-.d-mi{text-align:center}
-.d-ml{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;opacity:.7;display:block;margin-bottom:3px}
-.d-mv{font-size:22px;font-weight:800;display:block}
-.d-sep{width:1px;background:rgba(255,255,255,.25)}
-.d-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:1.25rem;position:relative;z-index:1}
-.d-tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 12px;border-radius:20px;background:rgba(255,255,255,.2);color:var(--white);border:1.5px solid rgba(255,255,255,.3)}
-.d-acts{display:flex;gap:10px;margin-top:1.5rem;flex-wrap:wrap;position:relative;z-index:1}
-.btn-w{background:var(--white);color:var(--orange);border-color:var(--white)}
-.btn-w:hover{background:var(--orange-light)}
-.btn-wo{background:rgba(255,255,255,.15);color:var(--white);border-color:rgba(255,255,255,.5)}
-.btn-wo:hover{background:rgba(255,255,255,.25)}
-.d-body{display:grid;grid-template-columns:320px 1fr;gap:1.5rem}
-.d-stl{font-size:12px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
-.d-stl::after{content:'';flex:1;height:2px;background:var(--orange-light);border-radius:2px}
-.il{list-style:none}
-.ii{display:flex;justify-content:space-between;align-items:center;padding:.65rem 0;border-bottom:1px solid var(--lighter);gap:1rem}
-.ii:last-child{border-bottom:none}
-.ii-l{flex:1}
-.ii-n{font-size:15px;font-weight:600;color:var(--dark)}
-.ii-cn{font-size:12px;font-weight:400;color:var(--mid);margin-top:1px}
-.ii-q{font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap}
-.sl{list-style:none}
-.si{display:flex;gap:1rem;padding:1.1rem 0;border-bottom:1px solid var(--lighter)}
-.si:last-child{border-bottom:none}
-.sn{width:36px;height:36px;border-radius:50%;background:var(--orange);color:var(--white);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.sb{flex:1;padding-top:6px}
-.st{font-size:15px;font-weight:500;color:var(--dark);line-height:1.65}
-.sc{font-size:13px;font-weight:400;color:var(--mid);margin-top:4px;line-height:1.55}
-
-/* ───── COOK OVERLAY ───── */
-.co{position:fixed;inset:0;background:var(--dark);z-index:300;display:none;flex-direction:column}
-.co.on{display:flex}
-.co-hdr{background:var(--orange);padding:1rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.co-hdr-l{display:flex;align-items:center;gap:14px}
-.co-x{background:rgba(255,255,255,.2);border:none;color:var(--white);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:var(--font)}
-.co-x:hover{background:rgba(255,255,255,.35)}
-.co-rname{font-size:16px;font-weight:800;color:var(--white)}
-.co-ctr{font-size:13px;font-weight:600;color:rgba(255,255,255,.75)}
-.co-prog{height:4px;background:rgba(255,255,255,.25)}
-.co-pfill{height:100%;background:var(--white);transition:width .4s ease}
-.co-body{flex:1;display:flex;overflow:hidden}
-.co-side{width:280px;background:#222;padding:1.5rem;overflow-y:auto;flex-shrink:0;border-right:1px solid #333}
-.co-side-t{font-size:10px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--orange);margin-bottom:1rem}
-.co-ii{font-size:13px;font-weight:500;color:#ccc;padding:.45rem 0;border-bottom:1px solid #333;display:flex;justify-content:space-between}
-.co-ii:last-child{border-bottom:none}
-.co-iq{color:var(--orange);font-weight:700}
-.co-step{flex:1;display:flex;flex-direction:column;justify-content:center;padding:3rem}
-.co-big-n{font-size:120px;font-weight:800;color:rgba(255,255,255,.06);line-height:1;margin-bottom:-.5rem}
-.co-txt{font-size:clamp(22px,4vw,34px);font-weight:700;color:var(--white);line-height:1.5;margin-bottom:.9rem;max-width:680px}
-.co-cn{font-size:16px;font-weight:400;color:rgba(255,255,255,.55);line-height:1.6;max-width:680px}
-.co-foot{background:#222;padding:1.25rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem}
-.co-nav{display:flex;gap:10px}
-.ck-btn{font-family:var(--font);font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:10px 24px;border-radius:var(--rs);border:2px solid var(--orange);cursor:pointer;transition:all .2s}
-.ck-p{background:var(--orange);color:var(--white)}
-.ck-p:hover{background:var(--orange2)}
-.ck-s{background:transparent;color:var(--orange)}
-.ck-s:hover{background:var(--orange);color:var(--white)}
-
-/* ───── ADD ───── */
-.imp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
-.drop-z{border:2.5px dashed var(--light);border-radius:var(--r);background:var(--white);padding:3rem 2rem;text-align:center;cursor:pointer;transition:all .2s;min-height:200px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.drop-z:hover,.drop-z.active{border-color:var(--orange);background:var(--orange-light)}
-.drop-ico{font-size:48px;margin-bottom:.8rem}
-.drop-t{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:.4rem}
-.drop-s{font-size:12px;font-weight:400;color:var(--mid)}
-.drop-c{margin-top:.8rem;font-size:13px;font-weight:700;color:var(--orange)}
-.prevs{display:flex;flex-wrap:wrap;gap:8px;margin-top:1rem}
-.prev{width:72px;height:72px;border-radius:8px;overflow:hidden;border:2px solid var(--orange);position:relative;flex-shrink:0}
-.prev img{width:100%;height:100%;object-fit:cover}
-.prev-n{position:absolute;bottom:2px;right:3px;background:var(--orange);color:var(--white);font-size:9px;font-weight:800;padding:1px 5px;border-radius:4px}
-.api-bx{background:var(--orange-light);border:2px solid var(--orange);border-radius:var(--r);padding:1.25rem 1.5rem;margin-bottom:1.5rem}
-.api-bx.ok{background:#F0FAF0;border-color:#4CAF50}
-.api-bx-t{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);margin-bottom:.6rem}
-.api-bx.ok .api-bx-t{color:#4CAF50}
-.api-row{display:flex;gap:8px;flex-wrap:wrap}
-.api-inp{flex:1;min-width:200px;font-family:monospace;font-size:13px;padding:8px 12px;border:2px solid var(--light);border-radius:8px;background:var(--white);color:var(--dark);outline:none;transition:all .2s}
-.api-inp:focus{border-color:var(--orange)}
-.api-note{font-size:11px;font-weight:500;color:var(--mid);margin-top:.5rem;line-height:1.6}
-.fl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--dark);margin-bottom:.5rem;display:block}
-.fi{width:100%;font-family:var(--font);font-size:14px;font-weight:500;padding:9px 13px;border:2px solid var(--light);border-radius:var(--rs);background:var(--white);color:var(--dark);outline:none;transition:all .2s}
-.fi:focus{border-color:var(--orange);box-shadow:0 0 0 3px var(--shadow-o)}
-.fi::placeholder{color:var(--mid);font-weight:400}
-.fta{min-height:90px;resize:vertical;line-height:1.6}
-.fr{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
-.fr3{grid-template-columns:1fr 1fr 70px}
-.pb{display:inline-flex;align-items:center;gap:5px;background:#F0FAF0;border:1.5px solid #4CAF50;color:#2E7D32;font-size:12px;font-weight:700;padding:5px 12px;border-radius:20px;margin-bottom:1rem}
-
-/* ───── SETTINGS ───── */
-.sw{max-width:600px}
-.ss{margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--lighter)}
-.ss:last-child{border-bottom:none}
-.ss-t{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:1rem;display:flex;align-items:center;gap:8px}
-.ss-t svg{color:var(--orange);width:18px;height:18px}
-
-/* ───── MODAL ───── */
-.mb{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;display:flex;align-items:center;justify-content:center;padding:1rem}
-.mm{background:var(--white);border-radius:var(--r);padding:2rem;width:100%;max-width:480px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.mm-t{font-size:20px;font-weight:800;color:var(--dark);margin-bottom:.4rem}
-.mm-s{font-size:14px;font-weight:400;color:var(--mid);margin-bottom:1.5rem;line-height:1.5}
-.mm-a{display:flex;gap:10px;flex-wrap:wrap}
-
-/* ───── ANIMS ───── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-@keyframes spin{to{transform:rotate(360deg)}}
-.spinner{width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(255,255,255,.35);border-top-color:var(--white);animation:spin .7s linear infinite}
-
-/* ───── RESPONSIVE ───── */
-@media(max-width:900px){.imp-grid,.d-body{grid-template-columns:1fr}.co-side{display:none}}
-@media(max-width:600px){.main{padding:1rem}.hdr{padding:0 1rem}.hdr-in{height:60px}.logo-name{font-size:16px}.nav-btn{padding:6px 10px;font-size:10px}.grid{grid-template-columns:1fr}.fr,.fr3{grid-template-columns:1fr}.co-step{padding:1.5rem}}
-@media print{.hdr,.nav,.d-acts,.dback,#detail-actions,.co{display:none!important}body{background:#fff}.main{padding:0;max-width:100%}.dh{background:none!important;color:var(--dark)!important;border:2px solid var(--orange)}.d-name,.d-cn{color:var(--dark)!important}.d-tag{border-color:var(--orange)!important;color:var(--orange)!important;background:transparent!important}.view{display:block!important}.view:not(#v-detail){display:none!important}.card{box-shadow:none;border:1px solid var(--light)}}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CHEF WANG 食谱</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark:#2E3528;--accent:#7A9060;--accent2:#6a7d52;--bg:#F5F4EF;--surface:#EEEEE8;
+      --border:#D8D9CC;--logo:#D4DEC4;--text:#2E3528;--muted:#6A7260;--faint:#8A9880;
+      --cn:#97C459;--cn-bg:#EAF3DE;--cn-text:#3B6D11;--wn:#85B7EB;--wn-bg:#E6F1FB;--wn-text:#185FA5;
+      --mb-fry-bg:#FEF4EA;--mb-fry-c:#854F0B;--mb-fry-b:#FAC775;
+      --mb-steam-bg:#E6F1FB;--mb-steam-c:#185FA5;--mb-steam-b:#85B7EB;
+      --mb-bake-bg:#FAECE7;--mb-bake-c:#993C1D;--mb-bake-b:#F0997B;
+      --mb-boil-bg:#EAF3DE;--mb-boil-c:#3B6D11;--mb-boil-b:#97C459;
+      --mb-stir-bg:#EEEDFE;--mb-stir-c:#534AB7;--mb-stir-b:#AFA9EC;
+      --mb-pan-bg:#FAEEDA;--mb-pan-c:#854F0B;--mb-pan-b:#EF9F27;
+    }
+    html{font-size:16px;}
+    body{font-family:'Noto Sans SC','DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;flex-direction:column;}
+    .topnav{background:var(--dark);height:58px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;gap:16px;position:sticky;top:0;z-index:100;}
+    .logo{display:flex;flex-direction:column;line-height:1;flex-shrink:0;text-decoration:none;}
+    .logo-chef{font-family:'DM Sans',sans-serif;font-size:9px;font-weight:500;letter-spacing:0.16em;color:var(--accent);text-transform:uppercase;}
+    .logo-row{display:flex;align-items:baseline;gap:5px;}
+    .logo-name{font-size:18px;font-weight:300;color:var(--logo);letter-spacing:0.08em;}
+    .logo-sub{font-size:10px;font-weight:300;color:rgba(212,222,196,0.4);letter-spacing:0.1em;}
+    .nav-search{flex:1;max-width:280px;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.07);border:0.5px solid rgba(212,222,196,0.2);border-radius:8px;padding:7px 13px;transition:border-color 0.2s;}
+    .nav-search:focus-within{border-color:rgba(212,222,196,0.5);}
+    .nav-search svg{flex-shrink:0;opacity:0.4;}
+    .nav-search input{border:none;background:transparent;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;color:var(--logo);outline:none;width:100%;}
+    .nav-search input::placeholder{color:rgba(212,222,196,0.3);}
+    .nav-right{display:flex;align-items:center;gap:10px;}
+    .btn-add{background:var(--accent);color:#fff;border:none;border-radius:8px;padding:8px 16px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:400;cursor:pointer;white-space:nowrap;transition:background 0.15s,transform 0.1s;}
+    .btn-add:hover{background:var(--accent2);}
+    .btn-add:active{transform:scale(0.97);}
+    .cuisine-bar{background:var(--dark);border-top:0.5px solid rgba(255,255,255,0.06);padding:0 32px;display:flex;}
+    .ctab{display:flex;align-items:center;gap:8px;padding:0 24px;height:46px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;user-select:none;}
+    .ctab:first-child{padding-left:0;}
+    .ctab-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+    .ctab-label{font-size:13px;font-weight:300;color:rgba(212,222,196,0.4);transition:color 0.15s;}
+    .ctab-count{font-family:'DM Sans',sans-serif;font-size:11px;color:rgba(212,222,196,0.2);transition:color 0.15s;}
+    .ctab:hover .ctab-label{color:rgba(212,222,196,0.75);}
+    .ctab.active .ctab-label{color:var(--logo);}
+    .ctab.active{border-bottom-color:var(--accent);}
+    .ctab.active .ctab-count{color:var(--accent);}
+    .filter-bar{background:var(--bg);border-bottom:0.5px solid var(--border);padding:10px 32px;display:flex;flex-direction:column;gap:8px;}
+    .filter-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+    .filter-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;color:var(--faint);letter-spacing:0.07em;text-transform:uppercase;width:36px;flex-shrink:0;}
+    .method-chip{padding:5px 13px;border-radius:8px;font-size:13px;font-weight:300;border:0.5px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s;user-select:none;}
+    .method-chip:hover{border-color:var(--accent);color:var(--accent);}
+    .method-chip.on{background:var(--dark);color:var(--logo);border-color:var(--dark);}
+    .tag-chip{padding:5px 13px;border-radius:20px;font-size:12px;font-weight:300;border:0.5px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s;user-select:none;}
+    .tag-chip:hover{border-color:var(--accent);color:var(--accent);}
+    .tag-chip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .filter-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+    .active-count{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--accent);}
+    .sort-select{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--muted);background:transparent;border:0.5px solid var(--border);border-radius:6px;padding:5px 9px;outline:none;cursor:pointer;}
+    .main{display:grid;grid-template-columns:1fr 340px;flex:1;min-height:0;}
+    .feed{padding:28px 32px;overflow-y:auto;}
+    .cuisine-section{margin-bottom:36px;}
+    .cuisine-header{display:flex;align-items:center;gap:10px;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+    .cuisine-pill{display:flex;align-items:center;gap:7px;padding:4px 13px;border-radius:20px;}
+    .cuisine-pill-cn{background:var(--cn-bg);}
+    .cuisine-pill-wn{background:var(--wn-bg);}
+    .cuisine-pill-dot{width:7px;height:7px;border-radius:50%;}
+    .cuisine-pill-label{font-size:13px;font-weight:400;}
+    .cuisine-pill-cn .cuisine-pill-label{color:var(--cn-text);}
+    .cuisine-pill-wn .cuisine-pill-label{color:var(--wn-text);}
+    .cuisine-recipe-count{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--faint);}
+    .recipe-row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:0.5px solid var(--border);cursor:pointer;transition:background 0.12s,padding 0.12s;border-radius:4px;}
+    .recipe-row:last-child{border-bottom:none;}
+    .recipe-row:hover{background:rgba(122,144,96,0.05);padding-left:6px;padding-right:6px;margin:0 -6px;}
+    .recipe-left{display:flex;align-items:center;gap:14px;}
+    .recipe-thumb{width:48px;height:48px;border-radius:10px;background:var(--surface);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:transform 0.15s;overflow:hidden;}
+    .recipe-thumb img{width:100%;height:100%;object-fit:cover;}
+    .recipe-row:hover .recipe-thumb{transform:scale(1.05);}
+    .recipe-title{font-size:14px;font-weight:300;color:var(--text);line-height:1.4;}
+    .recipe-meta{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--faint);margin-top:3px;}
+    .recipe-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
+    .method-badge{font-size:11px;font-weight:300;padding:3px 9px;border-radius:6px;border:0.5px solid;}
+    .mb-fry{background:var(--mb-fry-bg);color:var(--mb-fry-c);border-color:var(--mb-fry-b);}
+    .mb-steam{background:var(--mb-steam-bg);color:var(--mb-steam-c);border-color:var(--mb-steam-b);}
+    .mb-bake{background:var(--mb-bake-bg);color:var(--mb-bake-c);border-color:var(--mb-bake-b);}
+    .mb-boil{background:var(--mb-boil-bg);color:var(--mb-boil-c);border-color:var(--mb-boil-b);}
+    .mb-stirfry{background:var(--mb-stir-bg);color:var(--mb-stir-c);border-color:var(--mb-stir-b);}
+    .mb-pan{background:var(--mb-pan-bg);color:var(--mb-pan-c);border-color:var(--mb-pan-b);}
+    .src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+    .src-photo{background:var(--cn);}
+    .src-url{background:var(--wn);}
+    .src-manual{background:#B4B2A9;}
+    .state-box{padding:56px 0;text-align:center;}
+    .state-icon{font-size:36px;margin-bottom:12px;}
+    .state-text{font-size:14px;font-weight:300;color:var(--muted);}
+    .state-sub{font-size:12px;color:var(--faint);margin-top:6px;}
+    .skeleton-row{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:0.5px solid var(--border);animation:shimmer 1.4s ease-in-out infinite;}
+    .skeleton-thumb{width:48px;height:48px;border-radius:10px;background:var(--surface);flex-shrink:0;}
+    .skeleton-lines{flex:1;}
+    .skeleton-line{height:12px;border-radius:4px;background:var(--surface);margin-bottom:6px;}
+    .skeleton-line.short{width:40%;}
+    @keyframes shimmer{0%,100%{opacity:1;}50%{opacity:0.5;}}
+    .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--dark);color:var(--logo);padding:11px 20px;border-radius:8px;font-size:13px;font-weight:300;z-index:999;transition:transform 0.3s ease;white-space:nowrap;pointer-events:none;}
+    .toast.show{transform:translateX(-50%) translateY(0);}
+    .toast.error{background:#E24B4A;color:#fff;}
+    .panel{border-left:0.5px solid var(--border);display:flex;flex-direction:column;background:var(--bg);height:calc(100vh - 58px - 46px - 78px);position:sticky;top:calc(58px + 46px + 78px);overflow-y:auto;}
+    .panel-tabs{display:flex;border-bottom:0.5px solid var(--border);flex-shrink:0;position:sticky;top:0;background:var(--bg);z-index:10;}
+    .ptab{flex:1;padding:13px 0;text-align:center;font-size:12px;font-weight:400;color:var(--faint);cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;user-select:none;}
+    .ptab:hover{color:var(--muted);}
+    .ptab.active{color:var(--text);border-bottom-color:var(--accent);}
+    .panel-body{padding:18px;display:flex;flex-direction:column;gap:14px;flex:1;}
+    .ps{display:none;flex-direction:column;gap:13px;flex:1;}
+    .ps.active{display:flex;}
+    .upload-zone{border:0.5px dashed var(--border);border-radius:10px;padding:26px 16px;text-align:center;cursor:pointer;transition:background 0.15s,border-color 0.15s;}
+    .upload-zone:hover,.upload-zone.dragover{background:rgba(122,144,96,0.06);border-color:var(--accent);}
+    .upload-icon{width:36px;height:36px;border-radius:8px;background:var(--surface);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:16px;overflow:hidden;}
+    .upload-title{font-size:13px;font-weight:300;color:var(--text);margin-bottom:3px;}
+    .upload-sub{font-size:11px;font-weight:300;color:var(--faint);}
+    #photoInput{display:none;}
+    .field-group{display:flex;flex-direction:column;gap:5px;}
+    .field-label{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);}
+    .field-input{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color 0.15s;}
+    .field-input:focus{border-color:var(--accent);}
+    .field-input::placeholder{color:var(--faint);}
+    .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .chip-row{display:flex;gap:6px;flex-wrap:wrap;}
+    .mchip{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:300;border:0.5px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s;user-select:none;}
+    .mchip:hover{border-color:var(--accent);color:var(--accent);}
+    .mchip.on{background:var(--accent);color:#fff;border-color:var(--accent);}
+    .import-info{background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:12px 14px;}
+    .import-info-title{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);margin-bottom:7px;}
+    .import-info-list{font-size:12px;font-weight:300;color:var(--faint);line-height:2.1;}
+    .submit-btn{background:var(--dark);color:var(--logo);border:none;border-radius:8px;padding:11px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;cursor:pointer;width:100%;letter-spacing:0.04em;transition:background 0.15s,transform 0.1s;margin-top:auto;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .submit-btn:hover{background:#3e4a35;}
+    .submit-btn:active{transform:scale(0.98);}
+    .submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none;}
+    .spinner{width:14px;height:14px;border:2px solid rgba(212,222,196,0.3);border-top-color:var(--logo);border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .ai-card{background:var(--surface);border:0.5px solid var(--border);border-radius:10px;padding:14px;}
+    .ai-header{display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+    .ai-pulse{width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse 2s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+    .ai-title{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:var(--text);}
+    .ai-row{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:0.5px solid var(--border);}
+    .ai-row:last-child{border-bottom:none;padding-bottom:0;}
+    .ai-name{font-size:13px;font-weight:300;color:var(--text);}
+    .ai-tag{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--faint);margin-top:2px;}
+    .ai-add{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);cursor:pointer;padding:3px 9px;border:0.5px solid var(--border);border-radius:20px;background:var(--bg);transition:all 0.15s;white-space:nowrap;flex-shrink:0;}
+    .ai-add:hover{border-color:var(--accent);color:var(--accent);}
+    .src-legend{display:flex;gap:14px;margin-bottom:20px;align-items:center;}
+    .src-legend-item{display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--faint);}
+    .src-legend-dot{width:7px;height:7px;border-radius:50%;}
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(46,53,40,0.55);z-index:200;align-items:center;justify-content:center;padding:24px;}
+    .modal-overlay.open{display:flex;}
+    .modal{background:var(--bg);border-radius:14px;width:100%;max-width:560px;max-height:82vh;overflow-y:auto;border:0.5px solid var(--border);animation:slideUp 0.2s ease;}
+    @keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
+    .modal-header{background:var(--dark);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
+    .modal-title{font-size:20px;font-weight:300;color:var(--logo);line-height:1.3;}
+    .modal-meta{font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(212,222,196,0.45);margin-top:6px;}
+    .modal-close{background:rgba(255,255,255,0.1);border:none;color:var(--logo);width:30px;height:30px;border-radius:6px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:background 0.15s;}
+    .modal-close:hover{background:rgba(255,255,255,0.2);}
+    .modal-body{padding:24px;}
+    .modal-section-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;}
+    .modal-tags{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:24px;}
+    .modal-tag{font-size:12px;font-weight:300;padding:4px 11px;border-radius:6px;border:0.5px solid var(--border);color:var(--muted);background:var(--surface);}
+    .ingredient-list{list-style:none;margin-bottom:24px;}
+    .ingredient-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--border);font-size:13px;font-weight:300;}
+    .ingredient-item:last-child{border-bottom:none;}
+    .ingredient-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;}
+    .ingredient-name{flex:1;color:var(--text);}
+    .ingredient-qty{color:var(--faint);font-family:'DM Sans',sans-serif;font-size:12px;}
+    .step-list{list-style:none;}
+    .step-item{display:flex;gap:14px;margin-bottom:18px;}
+    .step-num{width:26px;height:26px;border-radius:50%;background:var(--dark);color:var(--logo);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+    .step-text{font-size:13px;font-weight:300;color:var(--text);line-height:1.7;flex:1;}
+    .draft-banner{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:8px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+    .draft-banner-text{font-size:12px;color:#854F0B;}
+    .draft-publish-btn{background:var(--dark);color:var(--logo);border:none;border-radius:6px;padding:6px 12px;font-family:'Noto Sans SC',sans-serif;font-size:12px;font-weight:300;cursor:pointer;white-space:nowrap;transition:background 0.15s;}
+    .draft-publish-btn:hover{background:#3e4a35;}
+    @media(max-width:768px){.main{grid-template-columns:1fr;}.panel{display:none;}.topnav,.cuisine-bar,.filter-bar,.feed{padding-left:16px;padding-right:16px;}.nav-search{max-width:180px;}}
+  </style>
 </head>
 <body>
-
-<!-- HEADER -->
-<header class="hdr">
-  <div class="hdr-in">
-    <div class="logo">
-      <svg class="logo-icon" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <ellipse cx="60" cy="90" rx="42" ry="9" fill="none" stroke="#E8650A" stroke-width="5" stroke-linecap="round"/>
-        <path d="M104 88 Q114 84 116 76" stroke="#E8650A" stroke-width="5" stroke-linecap="round" fill="none"/>
-        <path d="M49 68 Q45 60 49 51 Q53 42 49 33" stroke="#E8650A" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".55"/>
-        <path d="M61 66 Q57 55 61 44 Q65 33 61 22" stroke="#E8650A" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".55"/>
-        <path d="M73 68 Q69 60 73 51 Q77 42 73 33" stroke="#E8650A" stroke-width="3.5" stroke-linecap="round" fill="none" opacity=".55"/>
-        <rect x="36" y="56" width="48" height="14" rx="4" fill="#E8650A"/>
-        <path d="M42 56 Q42 26 60 24 Q78 26 78 56 Z" fill="#E8650A"/>
-        <circle cx="47" cy="43" r="11" fill="#E8650A"/>
-        <circle cx="73" cy="43" r="11" fill="#E8650A"/>
-        <circle cx="60" cy="34" r="13" fill="#E8650A"/>
-      </svg>
-      <div>
-        <span class="logo-name">CHEF WANG</span>
-        <span class="logo-sub">Kitchen &amp; Cuisine</span>
+  <div class="toast" id="toast"></div>
+  <nav class="topnav">
+    <a class="logo" href="#">
+      <span class="logo-chef">Chef</span>
+      <span class="logo-row"><span class="logo-name">WANG</span><span class="logo-sub">食谱</span></span>
+    </a>
+    <div class="nav-search">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#D4DEC4" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#D4DEC4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <input id="searchInput" placeholder="搜索食谱或食材..." oninput="debounceSearch()" />
+    </div>
+    <div class="nav-right"><button class="btn-add" onclick="openAddModal()">+ 添加食谱</button></div>
+  </nav>
+  <div class="cuisine-bar">
+    <div class="ctab active" onclick="switchCuisine('all',this)"><div class="ctab-dot" style="background:#8A9880"></div><span class="ctab-label">全部</span><span class="ctab-count" id="count-all">—</span></div>
+    <div class="ctab" onclick="switchCuisine('cn',this)"><div class="ctab-dot" style="background:var(--cn)"></div><span class="ctab-label">中餐</span><span class="ctab-count" id="count-cn">—</span></div>
+    <div class="ctab" onclick="switchCuisine('wn',this)"><div class="ctab-dot" style="background:var(--wn)"></div><span class="ctab-label">西餐</span><span class="ctab-count" id="count-wn">—</span></div>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-row">
+      <span class="filter-label">烹饪</span>
+      <div class="method-chip" data-method="炸" onclick="toggleMethod(this)">炸</div>
+      <div class="method-chip" data-method="蒸" onclick="toggleMethod(this)">蒸</div>
+      <div class="method-chip" data-method="烤" onclick="toggleMethod(this)">烤</div>
+      <div class="method-chip" data-method="煮" onclick="toggleMethod(this)">煮</div>
+      <div class="method-chip" data-method="炒" onclick="toggleMethod(this)">炒</div>
+      <div class="method-chip" data-method="煎" onclick="toggleMethod(this)">煎</div>
+      <div class="filter-right">
+        <span class="active-count" id="active-count">全部显示</span>
+        <select class="sort-select" onchange="state.sort=this.value;loadRecipes()">
+          <option value="newest">最新添加</option><option value="time">烹饪时间</option><option value="az">名称排序</option>
+        </select>
       </div>
     </div>
-    <nav class="nav">
-      <button class="nav-btn on" onclick="goTab('collection')">Collection</button>
-      <button class="nav-btn" onclick="goTab('add')">Add Recipe</button>
-      <button class="nav-btn" onclick="goTab('settings')">Settings</button>
-    </nav>
-    <button class="api-pill" id="api-pill" onclick="goTab('settings')">API Key</button>
-  </div>
-</header>
-
-<!-- MAIN -->
-<div class="main">
-
-<!-- ═══ COLLECTION ═══ -->
-<div class="view on" id="v-collection">
-  <div class="ph">
-    <div>
-      <div class="ph-title">Recipe <span>Collection</span></div>
-      <div class="ph-sub" id="coll-count"></div>
-    </div>
-    <button class="btn btn-orange" onclick="goTab('add')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
-      Add Recipe
-    </button>
-  </div>
-  <div class="ctrl-row">
-    <div class="srch-box">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4 4"/></svg>
-      <input id="srch" placeholder="Search recipes or ingredients…" oninput="renderColl()">
-    </div>
-    <button class="btn btn-ghost btn-sm" onclick="selTags=[];renderTagBar();renderColl()">Clear filters</button>
-  </div>
-  <div class="tag-bar" id="tag-bar"></div>
-  <div class="grid" id="grid"></div>
-</div>
-
-<!-- ═══ DETAIL ═══ -->
-<div class="view" id="v-detail">
-  <div class="dh" id="dh"></div>
-  <div class="d-body" id="db"></div>
-  <div id="d-acts" style="margin-top:1.5rem;display:flex;gap:10px;flex-wrap:wrap"></div>
-</div>
-
-<!-- ═══ ADD ═══ -->
-<div class="view" id="v-add">
-  <div class="ph">
-    <div>
-      <div class="ph-title">Add <span>Recipe</span></div>
-      <div class="ph-sub">Upload photos · paste text · or fill manually</div>
+    <div class="filter-row">
+      <span class="filter-label">标签</span>
+      <div class="tag-chip" data-tag="快手菜" onclick="toggleTag(this)">快手菜</div>
+      <div class="tag-chip" data-tag="素食" onclick="toggleTag(this)">素食</div>
+      <div class="tag-chip" data-tag="聚会" onclick="toggleTag(this)">聚会</div>
+      <div class="tag-chip" data-tag="周末" onclick="toggleTag(this)">周末</div>
+      <div class="tag-chip" data-tag="家常" onclick="toggleTag(this)">家常</div>
+      <div class="tag-chip" data-tag="低卡" onclick="toggleTag(this)">低卡</div>
     </div>
   </div>
-  <div class="api-bx" id="api-bx-add">
-    <div class="api-bx-t" id="api-bx-add-t">⚡ Anthropic API Key Required for AI Import</div>
-    <div class="api-row">
-      <input class="api-inp" id="apki-add" type="password" placeholder="sk-ant-api03-…" autocomplete="off">
-      <button class="btn btn-orange btn-sm" onclick="saveKey('add')">Save</button>
-      <button class="btn btn-ghost btn-sm" onclick="clearKey()">Clear</button>
+  <div class="main">
+    <div class="feed" id="feed">
+      <div class="src-legend">
+        <div class="src-legend-item"><div class="src-legend-dot src-photo"></div>照片导入</div>
+        <div class="src-legend-item"><div class="src-legend-dot src-url"></div>链接导入</div>
+        <div class="src-legend-item"><div class="src-legend-dot src-manual"></div>手动输入</div>
+      </div>
+      <div id="recipeContainer"></div>
     </div>
-    <p class="api-note">Stored only in your browser. Never in the code. Get yours at console.anthropic.com · ~$0.002 per parse</p>
-  </div>
-  <div class="imp-grid">
-    <!-- LEFT: Photo import -->
-    <div class="card" style="padding:1.5rem">
-      <div class="d-stl">📷 Photo Import</div>
-      <div class="drop-z" id="dz" onclick="document.getElementById('fup').click()">
-        <input type="file" id="fup" accept="image/*" multiple style="display:none" onchange="handleImgs(event)">
-        <div class="drop-ico">📸</div>
-        <div class="drop-t">Tap to upload recipe photos</div>
-        <div class="drop-s">WeChat · Sam's Club · 小红书 · Any source</div>
-        <div class="drop-c" id="drop-c"></div>
+    <div class="panel">
+      <div class="panel-tabs">
+        <div class="ptab active" id="ptab-photo" onclick="switchPanelTab('photo')">📷 照片</div>
+        <div class="ptab" id="ptab-url" onclick="switchPanelTab('url')">🔗 链接</div>
+        <div class="ptab" id="ptab-manual" onclick="switchPanelTab('manual')">✏️ 手动</div>
       </div>
-      <div class="prevs" id="prevs"></div>
-      <div style="margin-top:1.25rem">
-        <button class="btn btn-orange" id="parse-btn" onclick="doParse()" style="width:100%;justify-content:center">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
-          Parse with Claude
-        </button>
-      </div>
-      <div style="margin-top:.8rem">
-        <button class="btn btn-ghost btn-sm" style="width:100%;justify-content:center" onclick="togglePaste()">+ Or paste text instead</button>
-        <div id="paste-w" style="display:none;margin-top:10px">
-          <textarea class="fi fta" id="raw" placeholder="Paste recipe text in Chinese or English…"></textarea>
-        </div>
-      </div>
-    </div>
-    <!-- RIGHT: Manual form -->
-    <div class="card" style="padding:1.5rem">
-      <div class="d-stl">✏️ Recipe Details</div>
-      <div id="parse-badge" style="display:none" class="pb">✓ Parsed — review &amp; save below</div>
-      <div class="fr">
-        <div><label class="fl">Name (EN)</label><input class="fi" id="f-name" placeholder="e.g. Braised Pork"></div>
-        <div><label class="fl">菜名（中文）</label><input class="fi" id="f-name-cn" placeholder="如：红烧肉"></div>
-      </div>
-      <div class="fr fr3">
-        <div><label class="fl">Time (min)</label><input class="fi" id="f-time" type="number" placeholder="30"></div>
-        <div><label class="fl">Serves</label><input class="fi" id="f-srv" type="number" placeholder="2"></div>
-        <div><label class="fl">Emoji</label><input class="fi" id="f-emoji" placeholder="🍖" style="font-size:18px;text-align:center"></div>
-      </div>
-      <div class="fr">
-        <div><label class="fl">Ingredients (EN, one per line)</label><textarea class="fi fta" id="f-ing" placeholder="200g pork belly&#10;2 tbsp soy sauce"></textarea></div>
-        <div><label class="fl">食材（中文，每行一种）</label><textarea class="fi fta" id="f-ing-cn" placeholder="五花肉 200g&#10;生抽 2勺"></textarea></div>
-      </div>
-      <div class="fr" style="margin-bottom:12px">
-        <div><label class="fl">Steps (EN, one per line)</label><textarea class="fi fta" id="f-steps" placeholder="Blanch pork 5 min.&#10;Fry until golden."></textarea></div>
-        <div><label class="fl">步骤（中文，每行一步）</label><textarea class="fi fta" id="f-steps-cn" placeholder="五花肉焯水5分钟。&#10;煎至金黄。"></textarea></div>
-      </div>
-      <div style="margin-bottom:14px"><label class="fl">Tags (comma separated · 中英均可)</label><input class="fi" id="f-tags" placeholder="braised, 红烧, pork, quick"></div>
-      <button class="btn btn-orange" style="width:100%;justify-content:center" onclick="saveRecipe()">Save to Collection →</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══ SETTINGS ═══ -->
-<div class="view" id="v-settings">
-  <div class="ph"><div class="ph-title">⚙️ <span>Settings</span></div></div>
-  <div class="sw">
-    <div class="ss">
-      <div class="ss-t">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
-        Anthropic API Key
-      </div>
-      <div class="api-bx" id="api-bx-settings">
-        <div class="api-bx-t" id="api-bx-settings-t">Add your key to enable AI photo import</div>
-        <div class="api-row" style="margin-top:.6rem">
-          <input class="api-inp" id="apki-settings" type="password" placeholder="sk-ant-api03-…" autocomplete="off">
-          <button class="btn btn-orange btn-sm" onclick="saveKey('settings')">Save</button>
-          <button class="btn btn-ghost btn-sm" onclick="clearKey()">Clear</button>
-        </div>
-      </div>
-      <p class="api-note" style="margin-top:.6rem">Key is stored only in your browser's localStorage. Never included in source code. Cost ~$0.002 per recipe parsed.</p>
-    </div>
-    <div class="ss">
-      <div class="ss-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Display</div>
-      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;font-weight:600;color:var(--dark)">
-        <input type="checkbox" id="show-cn" checked style="accent-color:var(--orange);width:16px;height:16px">
-        Show Chinese text (显示中文)
-      </label>
-    </div>
-    <div class="ss">
-      <div class="ss-t"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Data</div>
-      <button class="btn btn-ghost" onclick="resetData()">Reset to Sample Recipes</button>
-    </div>
-  </div>
-</div>
-
-</div><!-- /.main -->
-
-<!-- COOK OVERLAY -->
-<div class="co" id="co">
-  <div class="co-hdr">
-    <div class="co-hdr-l">
-      <button class="co-x" onclick="closeCook()">✕</button>
-      <div>
-        <div class="co-rname" id="co-rname"></div>
-        <div class="co-ctr" id="co-ctr"></div>
-      </div>
-    </div>
-    <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)">COOK MODE</div>
-  </div>
-  <div class="co-prog"><div class="co-pfill" id="co-pf"></div></div>
-  <div class="co-body">
-    <div class="co-side">
-      <div class="co-side-t">Ingredients</div>
-      <div id="co-il"></div>
-    </div>
-    <div class="co-step">
-      <div class="co-big-n" id="co-bn"></div>
-      <div class="co-txt" id="co-txt"></div>
-      <div class="co-cn" id="co-cn"></div>
-    </div>
-  </div>
-  <div class="co-foot">
-    <button class="ck-btn ck-s" onclick="cookPrev()">← Previous</button>
-    <div class="co-nav">
-      <button class="ck-btn ck-p" id="co-next" onclick="cookNext()">Next Step →</button>
-    </div>
-  </div>
-</div>
-
-<!-- EXPORT MODAL -->
-<div id="modal" style="display:none">
-  <div class="mb" onclick="closeModal()">
-    <div class="mm" onclick="event.stopPropagation()">
-      <div class="mm-t">Export Recipe</div>
-      <div class="mm-s" id="mm-s"></div>
-      <div class="mm-a">
-        <button class="btn btn-orange" onclick="exportHTML()">⬇ Download .html</button>
-        <button class="btn btn-outline" onclick="printRecipe()">🖨 Print / PDF</button>
-        <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const DB='cw_v1', AK='cw_key';
-let recipes=[], selTags=[], cur=null, cIdx=0, imgs=[];
-
-function boot(){
-  try{recipes=JSON.parse(localStorage.getItem(DB)||'[]');}catch(e){recipes=[];}
-  if(!recipes.length)recipes=sampleData();
-  goTab('collection'); updateAPI();
-}
-
-function sampleData(){return[
-  {id:1,name:'Braised Pork Belly',nameCN:'红烧肉',emoji:'🍖',time:60,srv:4,
-   ing:['500g pork belly','2 tbsp light soy sauce','1 tbsp dark soy sauce','30g rock sugar','2 star anise','1 cinnamon stick','3 cloves garlic','2 slices ginger'],
-   ingCN:['五花肉 500g','生抽 2勺','老抽 1勺','冰糖 30g','八角 2个','桂皮 1段','大蒜 3瓣','姜片 2片'],
-   steps:['Blanch pork in boiling water 5 min. Cut into 3cm cubes.','Pan-fry in dry wok until golden brown all sides.','Add soy sauces, rock sugar, spices and water to cover. Boil.','Simmer low heat 40 min until tender. Serve.'],
-   stepsCN:['五花肉冷水焯5分钟，切3cm方块。','干锅煎至四面金黄。','加调料加水没过，大火烧开。','小火焖40分钟至酥软，出锅。'],
-   tags:['pork','猪肉','braised','红烧','slow-cook']},
-  {id:2,name:'Egg Fried Rice',nameCN:'蛋炒饭',emoji:'🍳',time:15,srv:2,
-   ing:['2 cups day-old rice','3 eggs','2 spring onions','2 tbsp soy sauce','1 tbsp sesame oil','1 tsp garlic paste'],
-   ingCN:['隔夜米饭 2碗','鸡蛋 3个','葱 2根','生抽 2勺','香油 1勺','蒜泥 1茶匙'],
-   steps:['Heat wok until smoking. Add oil and garlic, stir 20 sec.','Add cold rice, break clumps, stir-fry 2 min.','Push rice aside, scramble eggs, mix together.','Add soy sauce and sesame oil. Top with spring onion.'],
-   stepsCN:['热锅冷油，爆香蒜泥20秒。','下冷饭翻炒2分钟打散。','推边炒蛋后混合。','加生抽香油，撒葱花。'],
-   tags:['rice','饭','egg','蛋','quick','快手']},
-  {id:3,name:'Tomato & Egg Stir-fry',nameCN:'西红柿炒鸡蛋',emoji:'🍅',time:12,srv:2,
-   ing:['3 ripe tomatoes','3 eggs','2 tbsp oil','1 tsp sugar','Salt to taste'],
-   ingCN:['西红柿 3个','鸡蛋 3个','食用油 2勺','白糖 1茶匙','盐 适量'],
-   steps:['Beat eggs with salt. Cut tomatoes into wedges.','Scramble eggs in hot oil, set aside.','Stir-fry tomatoes 3 min until juicy.','Return eggs, add sugar and salt, toss and serve.'],
-   stepsCN:['鸡蛋加盐打散，西红柿切块。','热油炒蛋至半熟盛出。','炒番茄至出汁约3分钟。','倒回鸡蛋，加糖盐翻匀。'],
-   tags:['vegetarian','素','tomato','西红柿','egg','蛋','quick']},
-  {id:4,name:'Tomato Sour Soup Fish',nameCN:'番茄酸汤鱼',emoji:'🐟',time:30,srv:2,
-   ing:['200g tilapia fillets','2 tomatoes','30g fried tofu skin','1 egg white','1 pack tamarillo seasoning','Cornstarch, cooking wine, white pepper, salt'],
-   ingCN:['脆鲷鱼片 200g','番茄 2个','炸腐竹 30g','蛋清 1个','树番茄火锅底料 1包','淀粉、料酒、白胡椒、盐 适量'],
-   steps:['Marinate fish with egg white, cornstarch, wine, pepper, salt. Rest 10 min.','Stir-fry tomatoes with garlic until juicy.','Add seasoning and water. Boil.','Add tofu skin 2 min, then fish 5 min. Garnish.'],
-   stepsCN:['鱼片腌制10分钟。','炒香姜蒜，下番茄至出汁。','加底料加水煮开。','下腐竹2分钟，再下鱼片5分钟，撒葱花。'],
-   tags:['fish','鱼','tomato','西红柿','soup','汤']}
-];}
-
-function persist(){try{localStorage.setItem(DB,JSON.stringify(recipes));}catch(e){}}
-function showCN(){const e=document.getElementById('show-cn');return e?e.checked:true;}
-function toast(m,d=2500){const e=document.getElementById('toast');e.textContent=m;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),d);}
-function getKey(){try{return localStorage.getItem(AK)||'';}catch(e){return '';}}
-
-function saveKey(s){
-  const v=document.getElementById('apki-'+s).value.trim();
-  if(!v.startsWith('sk-ant-')){toast('Invalid key — must start with sk-ant-');return;}
-  localStorage.setItem(AK,v);
-  document.getElementById('apki-'+s).value='';
-  updateAPI();toast('API key saved ✓');
-}
-
-function clearKey(){localStorage.removeItem(AK);updateAPI();toast('API key cleared');}
-
-function updateAPI(){
-  const has=!!getKey();
-  const pill=document.getElementById('api-pill');
-  pill.textContent=has?'✓ API Active':'Add API Key';
-  pill.classList.toggle('ok',has);
-  ['add','settings'].forEach(s=>{
-    const bx=document.getElementById('api-bx-'+s);
-    const t=document.getElementById('api-bx-'+s+'-t');
-    const inp=document.getElementById('apki-'+s);
-    if(!bx)return;
-    bx.classList.toggle('ok',has);
-    if(t)t.textContent=has?'✓ API Key Active — AI import ready':'⚡ Anthropic API Key Required for AI Import';
-    if(inp)inp.placeholder=has?'(saved — enter new to replace)':'sk-ant-api03-…';
-  });
-}
-
-function goTab(t){
-  document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+t));
-  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('on',i===['collection','add','settings'].indexOf(t)));
-  if(t==='collection'){renderTagBar();renderColl();}
-  if(t==='settings')updateAPI();
-  window.scrollTo(0,0);
-}
-
-function goTabD(t){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('on',v.id==='v-'+t));window.scrollTo(0,0);}
-
-function allTags(){const s=new Set();recipes.forEach(r=>(r.tags||[]).forEach(t=>s.add(t)));return[...s].sort();}
-
-function renderTagBar(){
-  document.getElementById('tag-bar').innerHTML=allTags().map(t=>
-    `<button class="tag${selTags.includes(t)?' on':''}" onclick="togTag('${t.replace(/'/g,"\\'")}'">${t}</button>`
-  ).join('');
-}
-
-function togTag(t){const i=selTags.indexOf(t);i>=0?selTags.splice(i,1):selTags.push(t);renderTagBar();renderColl();}
-
-function matches(r){
-  const q=(document.getElementById('srch')||{value:''}).value.toLowerCase();
-  const blob=[r.name,r.nameCN,...(r.ing||[]),...(r.ingCN||[]),...(r.tags||[])].join(' ').toLowerCase();
-  return(!q||blob.includes(q))&&(!selTags.length||selTags.every(t=>blob.includes(t.toLowerCase())));
-}
-
-function renderColl(){
-  const cn=showCN();
-  const vis=recipes.filter(matches);
-  const g=document.getElementById('grid');
-  const c=document.getElementById('coll-count');
-  if(c)c.textContent=vis.length+' recipe'+(vis.length!==1?'s':'')+' in your collection';
-  if(!vis.length){g.innerHTML='<div class="empty"><div class="empty-ico">🍽</div><div class="empty-t">No recipes found</div><div class="empty-s">Try different filters or add a new recipe</div></div>';return;}
-  g.innerHTML=vis.map((r,i)=>`
-    <div class="card rc" style="animation-delay:${i*.04}s" onclick="showDetail(${r.id})">
-      <div class="rc-top">
-        <div class="rc-emoji">${r.emoji||'🍴'}</div>
-        <div class="rc-badge">No.${String(i+1).padStart(2,'0')}</div>
-      </div>
-      <div class="rc-body">
-        <div class="rc-name">${r.name}</div>
-        ${cn&&r.nameCN?`<div class="rc-cn">${r.nameCN}</div>`:''}
-        <div class="rc-meta">
-          ${r.time?`<div class="mc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${r.time}min</div>`:''}
-          ${r.srv?`<div class="mc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>${r.srv}</div>`:''}
-          ${r.steps?`<div class="mc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/></svg>${r.steps.length}steps</div>`:''}
-        </div>
-        <div class="rc-tags">${(r.tags||[]).slice(0,4).map(t=>`<span class="tag">${t}</span>`).join('')}</div>
-      </div>
-      <div class="rc-foot">
-        <div class="rc-link">View Recipe <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="m9 18 6-6-6-6"/></svg></div>
-        <button class="btn btn-ghost btn-sm btn-icon" onclick="event.stopPropagation();startCook(${r.id})" title="Cook Mode">👨‍🍳</button>
-      </div>
-    </div>`).join('');
-}
-
-function showDetail(id){
-  cur=recipes.find(r=>r.id===id);if(!cur)return;
-  const cn=showCN();
-  document.getElementById('dh').innerHTML=`
-    <button class="dback" onclick="goTab('collection')">← Collection</button>
-    <span class="d-emoji">${cur.emoji||'🍴'}</span>
-    <div class="d-name">${cur.name}</div>
-    ${cn&&cur.nameCN?`<div class="d-cn">${cur.nameCN}</div>`:''}
-    <div class="d-meta-row">
-      ${cur.time?`<div class="d-mi"><span class="d-ml">Time</span><span class="d-mv">${cur.time}<small style="font-size:13px;font-weight:500"> min</small></span></div><div class="d-sep"></div>`:''}
-      ${cur.srv?`<div class="d-mi"><span class="d-ml">Serves</span><span class="d-mv">${cur.srv}</span></div><div class="d-sep"></div>`:''}
-      <div class="d-mi"><span class="d-ml">Steps</span><span class="d-mv">${(cur.steps||[]).length}</span></div>
-    </div>
-    <div class="d-tags">${(cur.tags||[]).map(t=>`<span class="d-tag">${t}</span>`).join('')}</div>
-    <div class="d-acts">
-      <button class="btn btn-w" onclick="startCook(${cur.id})">👨‍🍳 Cook Mode</button>
-      <button class="btn btn-wo" onclick="openExport()">Export / Print</button>
-      <button class="btn btn-wo" onclick="if(confirm('Remove this recipe?')){delRecipe(${cur.id})}">Remove</button>
-    </div>`;
-
-  document.getElementById('db').innerHTML=`
-    <div class="card" style="padding:1.5rem">
-      <div class="d-stl">Ingredients</div>
-      <ul class="il">${(cur.ing||[]).map((ing,x)=>{
-        const m=ing.match(/^([\d\/\.\s]+\w*\s+)?(.+)$/);
-        const qty=m&&m[1]?m[1].trim():'';
-        const nm=m&&m[2]?m[2].trim():ing;
-        return`<li class="ii"><div class="ii-l"><div class="ii-n">${nm}</div>${cn&&cur.ingCN&&cur.ingCN[x]?`<div class="ii-cn">${cur.ingCN[x]}</div>`:''}</div>${qty?`<div class="ii-q">${qty}</div>`:''}</li>`;
-      }).join('')}</ul>
-    </div>
-    <div class="card" style="padding:1.5rem">
-      <div class="d-stl">Method</div>
-      <ol class="sl">${(cur.steps||[]).map((s,x)=>`
-        <li class="si">
-          <div class="sn">${x+1}</div>
-          <div class="sb">
-            <div class="st">${s}</div>
-            ${cn&&cur.stepsCN&&cur.stepsCN[x]?`<div class="sc">${cur.stepsCN[x]}</div>`:''}
+      <div class="panel-body">
+        <div class="ps active" id="ps-photo">
+          <div class="upload-zone" id="photoDropZone" onclick="document.getElementById('photoInput').click()">
+            <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoSelected(this)" />
+            <div class="upload-icon" id="photoPreviewIcon">📷</div>
+            <div class="upload-title" id="photoUploadTitle">上传食谱照片</div>
+            <div class="upload-sub" id="photoUploadSub">AI 将自动提取食材与步骤</div>
           </div>
-        </li>`).join('')}</ol>
-    </div>`;
+          <div class="field-group"><div class="field-label">菜系</div><div class="chip-row" id="photo-cuisine-chips"><div class="mchip on" onclick="singleChip(this,'photo-cuisine-chips')">中餐</div><div class="mchip" onclick="singleChip(this,'photo-cuisine-chips')">西餐</div></div></div>
+          <div class="field-group"><div class="field-label">烹饪方式</div><div class="chip-row" id="photo-method-chips"><div class="mchip" onclick="singleChip(this,'photo-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">蒸</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">烤</div><div class="mchip on" onclick="singleChip(this,'photo-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">煎</div></div></div>
+          <button class="submit-btn" id="photoSubmitBtn" onclick="submitPhoto()"><div class="spinner" id="photoSpinner"></div><span id="photoSubmitText">AI 提取食谱 →</span></button>
+        </div>
+        <div class="ps" id="ps-url">
+          <div class="field-group"><div class="field-label">食谱链接</div><input class="field-input" id="urlInput" placeholder="https://..." /></div>
+          <div class="import-info"><div class="import-info-title">AI 将自动导入</div><div class="import-info-list">✓ 食谱名称与简介<br>✓ 食材与用量<br>✓ 详细烹饪步骤<br>✓ 烹饪方式与时间</div></div>
+          <div class="field-group"><div class="field-label">菜系</div><div class="chip-row" id="url-cuisine-chips"><div class="mchip" onclick="singleChip(this,'url-cuisine-chips')">中餐</div><div class="mchip on" onclick="singleChip(this,'url-cuisine-chips')">西餐</div></div></div>
+          <div class="field-group"><div class="field-label">烹饪方式</div><div class="chip-row" id="url-method-chips"><div class="mchip" onclick="singleChip(this,'url-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">蒸</div><div class="mchip on" onclick="singleChip(this,'url-method-chips')">烤</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">煎</div></div></div>
+          <button class="submit-btn" id="urlSubmitBtn" onclick="submitUrl()"><div class="spinner" id="urlSpinner"></div><span id="urlSubmitText">导入并预览 →</span></button>
+        </div>
+        <div class="ps" id="ps-manual">
+          <div class="field-group"><div class="field-label">食谱名称</div><input class="field-input" id="manualTitle" placeholder="例：妈妈的红烧肉" /></div>
+          <div class="field-row">
+            <div class="field-group"><div class="field-label">烹饪时间（分钟）</div><input class="field-input" id="manualTime" type="number" placeholder="30" /></div>
+            <div class="field-group"><div class="field-label">份量（人数）</div><input class="field-input" id="manualServings" type="number" placeholder="4" /></div>
+          </div>
+          <div class="field-group"><div class="field-label">描述（选填）</div><input class="field-input" id="manualDesc" placeholder="简短介绍这道菜..." /></div>
+          <div class="field-group"><div class="field-label">菜系</div><div class="chip-row" id="manual-cuisine-chips"><div class="mchip on" onclick="singleChip(this,'manual-cuisine-chips')">中餐</div><div class="mchip" onclick="singleChip(this,'manual-cuisine-chips')">西餐</div></div></div>
+          <div class="field-group"><div class="field-label">烹饪方式</div><div class="chip-row" id="manual-method-chips"><div class="mchip" onclick="singleChip(this,'manual-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">蒸</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">烤</div><div class="mchip on" onclick="singleChip(this,'manual-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">煎</div></div></div>
+          <div class="field-group"><div class="field-label">标签（选填）</div><div class="chip-row" id="manual-tag-chips"><div class="mchip" onclick="this.classList.toggle('on')">快手菜</div><div class="mchip" onclick="this.classList.toggle('on')">素食</div><div class="mchip" onclick="this.classList.toggle('on')">聚会</div><div class="mchip" onclick="this.classList.toggle('on')">家常</div><div class="mchip" onclick="this.classList.toggle('on')">周末</div><div class="mchip" onclick="this.classList.toggle('on')">低卡</div></div></div>
+          <button class="submit-btn" id="manualSubmitBtn" onclick="submitManual()"><div class="spinner" id="manualSpinner"></div><span id="manualSubmitText">保存草稿 →</span></button>
+        </div>
+        <div class="ai-card">
+          <div class="ai-header"><div class="ai-pulse"></div><div class="ai-title">AI 为你推荐</div></div>
+          <div id="aiSuggestions">
+            <div class="skeleton-line" style="width:70%;height:11px;border-radius:4px;background:var(--surface);margin:8px 0;"></div>
+            <div class="skeleton-line" style="width:55%;height:11px;border-radius:4px;background:var(--surface);margin:8px 0;"></div>
+            <div class="skeleton-line" style="width:65%;height:11px;border-radius:4px;background:var(--surface);margin:8px 0;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  document.getElementById('d-acts').innerHTML='';
-  goTabD('detail');
-}
+  <!-- Recipe Modal -->
+  <div class="modal-overlay" id="recipeModal" onclick="if(event.target===this)closeRecipeModal()">
+    <div class="modal">
+      <div class="modal-header">
+        <div><div class="modal-title" id="modalTitle">—</div><div class="modal-meta" id="modalMeta">—</div></div>
+        <button class="modal-close" onclick="closeRecipeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="modalDraftBanner"></div>
+        <div class="modal-section-label">标签</div>
+        <div class="modal-tags" id="modalTags"></div>
+        <div class="modal-section-label">食材</div>
+        <ul class="ingredient-list" id="modalIngredients"></ul>
+        <div class="modal-section-label">烹饪步骤</div>
+        <ol class="step-list" id="modalSteps"></ol>
+      </div>
+    </div>
+  </div>
 
-function delRecipe(id){recipes=recipes.filter(r=>r.id!==id);persist();toast('Recipe removed');goTab('collection');}
+  <script>
+  const state={cuisine:'all',methods:new Set(),tags:new Set(),sort:'newest',search:'',recipes:[]};
+  const METHOD_MAP={'炸':'mb-fry','蒸':'mb-steam','烤':'mb-bake','煮':'mb-boil','炒':'mb-stirfry','煎':'mb-pan'};
+  const CUISINE_LABEL={cn:'中餐',wn:'西餐'};
 
-/* COOK */
-function startCook(id){cur=recipes.find(r=>r.id===id);if(!cur)return;cIdx=0;document.getElementById('co').classList.add('on');renderCook();}
-function closeCook(){document.getElementById('co').classList.remove('on');}
-function renderCook(){
-  const steps=cur.steps||[];const cn=showCN();const total=steps.length;
-  const isLast=cIdx>=total-1;const pct=((cIdx+1)/total*100).toFixed(1);
-  document.getElementById('co-rname').textContent=cur.name+(cn&&cur.nameCN?' · '+cur.nameCN:'');
-  document.getElementById('co-ctr').textContent='Step '+(cIdx+1)+' of '+total;
-  document.getElementById('co-pf').style.width=pct+'%';
-  document.getElementById('co-bn').textContent=cIdx+1;
-  document.getElementById('co-txt').textContent=steps[cIdx]||'';
-  document.getElementById('co-cn').textContent=(cn&&cur.stepsCN&&cur.stepsCN[cIdx])?cur.stepsCN[cIdx]:'';
-  document.getElementById('co-next').textContent=isLast?'✓ Complete!':'Next Step →';
-  document.getElementById('co-il').innerHTML=(cur.ing||[]).map((ing,x)=>
-    `<div class="co-ii"><span>${ing}</span>${cn&&cur.ingCN&&cur.ingCN[x]?`<span class="co-iq">${cur.ingCN[x]}</span>`:''}</div>`
-  ).join('');
-}
-function cookNext(){const steps=cur.steps||[];if(cIdx>=steps.length-1){closeCook();toast('Recipe complete! 🎉',3000);return;}cIdx++;renderCook();}
-function cookPrev(){if(cIdx>0){cIdx--;renderCook();}}
-
-/* UPLOAD */
-function togglePaste(){const w=document.getElementById('paste-w');w.style.display=w.style.display==='none'?'':'none';}
-function handleImgs(e){
-  const files=Array.from(e.target.files);if(!files.length)return;
-  imgs=[];document.getElementById('prevs').innerHTML='';
-  const dz=document.getElementById('dz');let loaded=0;
-  files.forEach((f,i)=>{
-    const r=new FileReader();
-    r.onload=ev=>{
-      const url=ev.target.result;
-      imgs.push({mediaType:f.type||'image/jpeg',data:url.split(',')[1]});
-      loaded++;
-      const el=document.createElement('div');el.className='prev';
-      el.innerHTML=`<img src="${url}"><div class="prev-n">${i+1}</div>`;
-      document.getElementById('prevs').appendChild(el);
-      if(loaded===files.length){
-        dz.classList.add('active');
-        dz.querySelector('.drop-t').textContent=loaded+' photo'+(loaded>1?'s':'')+' ready';
-        dz.querySelector('.drop-s').textContent='Click to change photos';
-        document.getElementById('drop-c').textContent='✓ Ready to parse';
-      }
-    };
-    r.readAsDataURL(f);
-  });
-}
-
-/* AI PARSE */
-async function doParse(){
-  const raw=(document.getElementById('raw')||{value:''}).value.trim();
-  const hasI=imgs.length>0;
-  if(!raw&&!hasI){toast('Upload photos or paste text first');return;}
-  const key=getKey();
-  if(!key){toast('API key required — check Settings');goTab('settings');return;}
-  const btn=document.getElementById('parse-btn');
-  btn.innerHTML='<div class="spinner"></div> Parsing…';btn.disabled=true;
-  const prompt=`Extract a recipe and return ONLY valid JSON (no markdown, no fences, no explanation):
-{"name":"English name","nameCN":"Chinese name","emoji":"one food emoji","time":minutes,"srv":servings,"ing":["English ingredient with qty",...],"ingCN":["Chinese ingredient with qty same order",...],"steps":["English step",...],"stepsCN":["Chinese step same order",...],"tags":["3-6 lowercase tags mixing EN and ZH"]}${raw?'\nText:\n'+raw:''}`;
-  try{
-    const content=hasI?[...imgs.map(img=>({type:'image',source:{type:'base64',media_type:img.mediaType,data:img.data}})),{type:'text',text:prompt}]:prompt;
-    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:2500,messages:[{role:'user',content}]})});
-    if(!res.ok){const e=await res.json();throw new Error(e.error?.message||'API error '+res.status);}
-    const d=await res.json();
-    const txt=(d.content||[]).map(c=>c.text||'').join('').replace(/```json|```/g,'').trim();
-    const p=JSON.parse(txt);
-    document.getElementById('f-name').value=p.name||'';
-    document.getElementById('f-name-cn').value=p.nameCN||'';
-    document.getElementById('f-emoji').value=p.emoji||'';
-    document.getElementById('f-time').value=p.time||'';
-    document.getElementById('f-srv').value=p.srv||'';
-    document.getElementById('f-ing').value=(p.ing||[]).join('\n');
-    document.getElementById('f-ing-cn').value=(p.ingCN||[]).join('\n');
-    document.getElementById('f-steps').value=(p.steps||[]).join('\n');
-    document.getElementById('f-steps-cn').value=(p.stepsCN||[]).join('\n');
-    document.getElementById('f-tags').value=(p.tags||[]).join(', ');
-    const rawEl=document.getElementById('raw');if(rawEl)rawEl.value='';
-    document.getElementById('parse-badge').style.display='flex';
-    btn.innerHTML='✓ Parsed — review &amp; save below';
-    btn.style.background='#4CAF50';btn.style.borderColor='#4CAF50';btn.disabled=false;
-    setTimeout(()=>{btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg> Parse with Claude';btn.style.background='';btn.style.borderColor='';},5000);
-  }catch(e){
-    toast('Parse failed: '+e.message);
-    btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg> Parse with Claude';
-    btn.disabled=false;
+  async function api(path,options={}){
+    const res=await fetch('/api'+path,{headers:{'Content-Type':'application/json'},...options});
+    const data=await res.json();
+    if(!data.success)throw new Error(data.error||'请求失败');
+    return data;
   }
-}
 
-/* SAVE */
-function saveRecipe(){
-  const name=document.getElementById('f-name').value.trim();
-  if(!name){toast('Please enter a recipe name');return;}
-  const r={id:Date.now(),name,nameCN:document.getElementById('f-name-cn').value.trim(),emoji:document.getElementById('f-emoji').value.trim()||'🍴',time:parseInt(document.getElementById('f-time').value)||null,srv:parseInt(document.getElementById('f-srv').value)||null,ing:document.getElementById('f-ing').value.split('\n').map(s=>s.trim()).filter(Boolean),ingCN:document.getElementById('f-ing-cn').value.split('\n').map(s=>s.trim()).filter(Boolean),steps:document.getElementById('f-steps').value.split('\n').map(s=>s.trim()).filter(Boolean),stepsCN:document.getElementById('f-steps-cn').value.split('\n').map(s=>s.trim()).filter(Boolean),tags:document.getElementById('f-tags').value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean)};
-  recipes.push(r);persist();
-  ['f-name','f-name-cn','f-emoji','f-time','f-srv','f-ing','f-ing-cn','f-steps','f-steps-cn','f-tags'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  imgs=[];document.getElementById('prevs').innerHTML='';document.getElementById('fup').value='';
-  const dz=document.getElementById('dz');dz.classList.remove('active');
-  dz.querySelector('.drop-t').textContent='Tap to upload recipe photos';
-  dz.querySelector('.drop-s').textContent="WeChat · Sam's Club · 小红书 · Any source";
-  document.getElementById('drop-c').textContent='';
-  document.getElementById('parse-badge').style.display='none';
-  const rawEl=document.getElementById('raw');if(rawEl)rawEl.value='';
-  toast('Recipe saved ✓');goTab('collection');
-}
+  async function loadRecipes(){
+    showSkeleton();
+    const p=new URLSearchParams({sort:state.sort,status:'all'});
+    if(state.cuisine!=='all')p.set('cuisine',state.cuisine);
+    if(state.search)p.set('search',state.search);
+    try{const data=await api('/recipes?'+p);state.recipes=data.recipes;renderRecipes(state.recipes);loadSuggestions();}
+    catch(err){showError(err.message);}
+  }
 
-/* EXPORT */
-function openExport(){document.getElementById('mm-s').textContent=`Export "${cur.name}" as a webpage or PDF.`;document.getElementById('modal').style.display='';}
-function closeModal(){document.getElementById('modal').style.display='none';}
+  function showSkeleton(){
+    document.getElementById('recipeContainer').innerHTML=Array(5).fill(0).map(()=>`
+      <div class="skeleton-row"><div class="skeleton-thumb"></div><div class="skeleton-lines"><div class="skeleton-line" style="width:60%"></div><div class="skeleton-line short"></div></div></div>`).join('');
+  }
+  function showError(msg){
+    document.getElementById('recipeContainer').innerHTML=`<div class="state-box"><div class="state-icon">⚠️</div><div class="state-text">加载失败</div><div class="state-sub">${msg}<br><br>请确认 server.js 正在运行</div></div>`;
+  }
 
-function buildExport(r){
-  const cn=showCN();
-  return`<!DOCTYPE html><html lang="zh"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${r.name} — Chef Wang</title><link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet"><style>:root{--o:#E8650A;--d:#4A4A4A;--m:#9A9A9A;--l:#D8D8D8;--ll:#F4F4F4;--f:'Montserrat',sans-serif}*{box-sizing:border-box;margin:0;padding:0}body{font-family:var(--f);background:#fff;color:var(--d);max-width:820px;margin:0 auto;padding:3rem 2rem 4rem}.top{text-align:center;padding-bottom:2rem;margin-bottom:2.5rem;border-bottom:3px solid var(--o)}.brand{font-size:10px;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--m);margin-bottom:.4rem}.title{font-size:clamp(28px,6vw,52px);font-weight:800;letter-spacing:-.02em;color:var(--d);line-height:1;margin-bottom:.3rem}.tcn{font-size:18px;font-weight:400;color:var(--m);margin-bottom:1.5rem}.meta{display:flex;gap:2rem;justify-content:center;flex-wrap:wrap}.mi{text-align:center}.ml{font-size:9px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--o);display:block;margin-bottom:3px}.mv{font-size:22px;font-weight:800;color:var(--d)}.tags{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;margin-top:1.2rem}.tag{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1.5px solid var(--l);color:var(--m)}.body{display:grid;grid-template-columns:280px 1fr;gap:3rem}@media(max-width:600px){.body{grid-template-columns:1fr}}.sec{font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--o);margin:2.5rem 0 1rem;padding-bottom:.6rem;border-bottom:2px solid #FDF0E8}.ii{display:flex;justify-content:space-between;padding:.55rem 0;border-bottom:1px solid var(--ll);font-size:14px}.in{font-weight:600}.icn{font-size:12px;color:var(--m);margin-top:2px}.iq{font-weight:700;color:var(--o);white-space:nowrap}.step{display:flex;gap:14px;padding:1rem 0;border-bottom:1px solid var(--ll)}.sn{width:32px;height:32px;border-radius:50%;background:var(--o);color:#fff;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}.st{font-size:14px;font-weight:600;line-height:1.6;color:var(--d)}.sc{font-size:12px;font-weight:400;color:var(--m);margin-top:3px;line-height:1.5}.foot{text-align:center;margin-top:3rem;padding-top:1.5rem;border-top:1px solid var(--ll);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--m)}@media print{body{padding:1.5rem}}</style></head><body>
-<div class="top"><div class="brand">Chef Wang · Kitchen &amp; Cuisine</div><div class="title">${r.name}</div>${r.nameCN?`<div class="tcn">${r.nameCN}</div>`:''}<div class="meta">${r.time?`<div class="mi"><span class="ml">Time</span><div class="mv">${r.time} min</div></div>`:''} ${r.srv?`<div class="mi"><span class="ml">Serves</span><div class="mv">${r.srv}</div></div>`:''}<div class="mi"><span class="ml">Steps</span><div class="mv">${(r.steps||[]).length}</div></div></div><div class="tags">${(r.tags||[]).map(t=>`<span class="tag">${t}</span>`).join('')}</div></div>
-<div class="body"><div><div class="sec">Ingredients${cn&&r.ingCN?' · 食材':''}</div>${(r.ing||[]).map((ing,x)=>{const m=ing.match(/^([\d\/\.\s]+\w*\s+)?(.+)$/);const qty=m&&m[1]?m[1].trim():'';const nm=m&&m[2]?m[2].trim():ing;return`<div class="ii"><div><div class="in">${nm}</div>${cn&&r.ingCN&&r.ingCN[x]?`<div class="icn">${r.ingCN[x]}</div>`:''}</div>${qty?`<div class="iq">${qty}</div>`:''}</div>`;}).join('')}</div>
-<div><div class="sec">Method${cn&&r.stepsCN?' · 步骤':''}</div>${(r.steps||[]).map((s,x)=>`<div class="step"><div class="sn">${x+1}</div><div><div class="st">${s}</div>${cn&&r.stepsCN&&r.stepsCN[x]?`<div class="sc">${r.stepsCN[x]}</div>`:''}</div></div>`).join('')}</div></div>
-<div class="foot">Chef Wang · Kitchen &amp; Cuisine · ${new Date().getFullYear()}</div></body></html>`;
-}
+  function renderRecipes(recipes){
+    const filtered=recipes.filter(r=>{
+      const mOk=state.methods.size===0||state.methods.has(r.method);
+      const tOk=state.tags.size===0||r.tags.some(t=>state.tags.has(t));
+      return mOk&&tOk;
+    });
+    const cn=filtered.filter(r=>r.cuisine==='cn');
+    const wn=filtered.filter(r=>r.cuisine==='wn');
+    document.getElementById('count-all').textContent=cn.length+wn.length;
+    document.getElementById('count-cn').textContent=cn.length;
+    document.getElementById('count-wn').textContent=wn.length;
+    const container=document.getElementById('recipeContainer');
+    if(!filtered.length){container.innerHTML=`<div class="state-box"><div class="state-icon">🔍</div><div class="state-text">没有找到符合条件的食谱</div><div class="state-sub">试试调整筛选条件</div></div>`;return;}
+    let html='';
+    if(state.cuisine!=='wn'&&cn.length)html+=buildSection('cn',cn);
+    if(state.cuisine!=='cn'&&wn.length)html+=buildSection('wn',wn);
+    container.innerHTML=html;
+  }
 
-function exportHTML(){const a=document.createElement('a');a.href='data:text/html;charset=utf-8,'+encodeURIComponent(buildExport(cur));a.download=(cur.nameCN||cur.name).replace(/[\s\/\\:*?"<>|]/g,'-')+'.html';a.click();closeModal();}
-function printRecipe(){const w=window.open('','_blank');w.document.write(buildExport(cur));w.document.close();setTimeout(()=>w.print(),600);closeModal();}
-function resetData(){if(!confirm('Reset to samples? All recipes will be deleted.'))return;localStorage.removeItem(DB);recipes=sampleData();persist();toast('Reset complete');goTab('collection');}
+  function buildSection(cuisine,recipes){
+    const pill=cuisine==='cn'
+      ?`<div class="cuisine-pill cuisine-pill-cn"><div class="cuisine-pill-dot" style="background:var(--cn)"></div><span class="cuisine-pill-label">中餐</span></div>`
+      :`<div class="cuisine-pill cuisine-pill-wn"><div class="cuisine-pill-dot" style="background:var(--wn)"></div><span class="cuisine-pill-label">西餐</span></div>`;
+    return`<div class="cuisine-section"><div class="cuisine-header">${pill}<span class="cuisine-recipe-count">${recipes.length} 道食谱</span></div>${recipes.map(r=>buildRow(r)).join('')}</div>`;
+  }
 
-boot();
-</script>
+  function buildRow(r){
+    const mc=METHOD_MAP[r.method]||'mb-boil';
+    const sc=r.source_type==='photo'?'src-photo':r.source_type==='url'?'src-url':'src-manual';
+    const t=r.time_minutes>=60?Math.floor(r.time_minutes/60)+' 小时'+(r.time_minutes%60?(r.time_minutes%60)+' 分钟':''):r.time_minutes+' 分钟';
+    const draft=r.status==='draft'?`<span style="font-size:10px;color:#854F0B;background:#FEF4EA;padding:2px 6px;border-radius:4px;border:0.5px solid #FAC775;margin-left:6px;">草稿</span>`:'';
+    const thumb=r.photo_url?`<img src="${r.photo_url}" alt="${r.title}" />`:(r.cuisine==='cn'?'🥢':'🍴');
+    return`<div class="recipe-row" onclick="openRecipe(${r.id})"><div class="recipe-left"><div class="recipe-thumb">${thumb}</div><div><div class="recipe-title">${r.title}${draft}</div><div class="recipe-meta">${CUISINE_LABEL[r.cuisine]||r.cuisine} · ${t} · ${r.servings} 人份</div></div></div><div class="recipe-right"><span class="method-badge ${mc}">${r.method}</span><div class="src-dot ${sc}"></div></div></div>`;
+  }
+
+  async function openRecipe(id){
+    document.getElementById('modalTitle').textContent='加载中…';
+    document.getElementById('modalMeta').textContent='';
+    document.getElementById('modalTags').innerHTML='';
+    document.getElementById('modalIngredients').innerHTML='';
+    document.getElementById('modalSteps').innerHTML='';
+    document.getElementById('modalDraftBanner').innerHTML='';
+    document.getElementById('recipeModal').classList.add('open');
+    try{
+      const data=await api('/recipes/'+id);const r=data.recipe;
+      const t=r.time_minutes>=60?Math.floor(r.time_minutes/60)+' 小时'+(r.time_minutes%60?(r.time_minutes%60)+' 分钟':''):r.time_minutes+' 分钟';
+      document.getElementById('modalTitle').textContent=r.title;
+      document.getElementById('modalMeta').textContent=`${CUISINE_LABEL[r.cuisine]||r.cuisine} · ${r.method} · ${t} · ${r.servings} 人份`;
+      if(r.status==='draft')document.getElementById('modalDraftBanner').innerHTML=`<div class="draft-banner"><div class="draft-banner-text">⚠️ 此食谱为草稿，尚未对访客显示</div><button class="draft-publish-btn" onclick="publishRecipe(${r.id})">发布食谱</button></div>`;
+      document.getElementById('modalTags').innerHTML=(r.tags||[]).map(t=>`<span class="modal-tag">${t}</span>`).join('')||`<span class="modal-tag" style="color:var(--faint)">暂无标签</span>`;
+      document.getElementById('modalIngredients').innerHTML=(r.ingredients||[]).map(i=>`<li class="ingredient-item"><div class="ingredient-dot"></div><span class="ingredient-name">${i.name}</span><span class="ingredient-qty">${i.qty}</span></li>`).join('')||`<li class="ingredient-item" style="color:var(--faint)">暂无食材信息</li>`;
+      document.getElementById('modalSteps').innerHTML=(r.steps||[]).map((s,i)=>`<li class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></li>`).join('')||`<li class="step-item"><div class="step-text" style="color:var(--faint)">暂无步骤信息</div></li>`;
+    }catch(err){document.getElementById('modalTitle').textContent='加载失败';document.getElementById('modalMeta').textContent=err.message;}
+  }
+
+  function closeRecipeModal(){document.getElementById('recipeModal').classList.remove('open');}
+
+  async function publishRecipe(id){
+    try{await api('/recipes/'+id+'/publish',{method:'PATCH'});showToast('✓ 食谱已发布');closeRecipeModal();loadRecipes();}
+    catch(err){showToast('发布失败：'+err.message,true);}
+  }
+
+  let selectedPhotoFile=null;
+  function handlePhotoSelected(input){
+    const file=input.files[0];if(!file)return;
+    selectedPhotoFile=file;
+    const url=URL.createObjectURL(file);
+    document.getElementById('photoPreviewIcon').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" />`;
+    document.getElementById('photoUploadTitle').textContent=file.name;
+    document.getElementById('photoUploadSub').textContent=(file.size/1024).toFixed(0)+' KB · 点击更换';
+  }
+  const dz=document.getElementById('photoDropZone');
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
+  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/')){const dt=new DataTransfer();dt.items.add(f);const inp=document.getElementById('photoInput');inp.files=dt.files;handlePhotoSelected(inp);}});
+
+  async function submitPhoto(){
+    if(!selectedPhotoFile){showToast('请先选择图片',true);return;}
+    setLoading('photo',true);
+    try{
+      const fd=new FormData();fd.append('photo',selectedPhotoFile);
+      const res=await fetch('/api/import/photo',{method:'POST',body:fd});
+      const data=await res.json();if(!data.success)throw new Error(data.error);
+      showToast('✓ '+data.message);resetPhotoForm();loadRecipes();openRecipe(data.recipe.id);
+    }catch(err){showToast('提取失败：'+err.message,true);}
+    finally{setLoading('photo',false);}
+  }
+  function resetPhotoForm(){selectedPhotoFile=null;document.getElementById('photoInput').value='';document.getElementById('photoPreviewIcon').innerHTML='📷';document.getElementById('photoUploadTitle').textContent='上传食谱照片';document.getElementById('photoUploadSub').textContent='AI 将自动提取食材与步骤';}
+
+  async function submitUrl(){
+    const url=document.getElementById('urlInput').value.trim();
+    if(!url){showToast('请输入食谱链接',true);return;}
+    if(!url.startsWith('http')){showToast('请输入完整链接（以 http 开头）',true);return;}
+    setLoading('url',true);
+    try{const data=await api('/import/url',{method:'POST',body:JSON.stringify({url})});showToast('✓ '+data.message);document.getElementById('urlInput').value='';loadRecipes();openRecipe(data.recipe.id);}
+    catch(err){showToast('导入失败：'+err.message,true);}
+    finally{setLoading('url',false);}
+  }
+
+  async function submitManual(){
+    const title=document.getElementById('manualTitle').value.trim();
+    if(!title){showToast('请输入食谱名称',true);return;}
+    setLoading('manual',true);
+    const cuisine=getActiveChip('manual-cuisine-chips')==='西餐'?'wn':'cn';
+    const method=getActiveChip('manual-method-chips')||'煮';
+    const tags=[...document.querySelectorAll('#manual-tag-chips .mchip.on')].map(c=>c.textContent.trim());
+    try{
+      const data=await api('/recipes',{method:'POST',body:JSON.stringify({title,cuisine,method,time_minutes:parseInt(document.getElementById('manualTime').value)||30,servings:parseInt(document.getElementById('manualServings').value)||4,description:document.getElementById('manualDesc').value.trim(),tags,ingredients:[],steps:[],status:'draft'})});
+      showToast('✓ 食谱已保存为草稿，点击可查看和发布');
+      ['manualTitle','manualTime','manualServings','manualDesc'].forEach(id=>document.getElementById(id).value='');
+      document.querySelectorAll('#manual-tag-chips .mchip').forEach(c=>c.classList.remove('on'));
+      loadRecipes();openRecipe(data.recipe.id);
+    }catch(err){showToast('保存失败：'+err.message,true);}
+    finally{setLoading('manual',false);}
+  }
+
+  async function loadSuggestions(){
+    try{
+      const data=await api('/suggest');
+      document.getElementById('aiSuggestions').innerHTML=data.suggestions.map(s=>`
+        <div class="ai-row"><div><div class="ai-name">${s.title}</div><div class="ai-tag">${s.cuisine==='cn'?'中餐':'西餐'} · ${s.method}</div></div>
+        <button class="ai-add" onclick="prefillManual('${s.title}','${s.cuisine}','${s.method}')">+ 添加</button></div>`).join('');
+    }catch{document.getElementById('aiSuggestions').innerHTML=`<div style="font-size:12px;color:var(--faint);padding:8px 0;">暂无推荐</div>`;}
+  }
+
+  function prefillManual(title,cuisine,method){
+    switchPanelTab('manual');
+    document.getElementById('manualTitle').value=title;
+    document.querySelectorAll('#manual-cuisine-chips .mchip').forEach(c=>c.classList.toggle('on',(cuisine==='cn'?'中餐':'西餐')===c.textContent));
+    document.querySelectorAll('#manual-method-chips .mchip').forEach(c=>c.classList.toggle('on',c.textContent===method));
+  }
+
+  function switchCuisine(cuisine,el){state.cuisine=cuisine;document.querySelectorAll('.ctab').forEach(t=>t.classList.remove('active'));el.classList.add('active');loadRecipes();}
+  function toggleMethod(el){const m=el.dataset.method;el.classList.toggle('on');el.classList.contains('on')?state.methods.add(m):state.methods.delete(m);updateActiveCount();renderRecipes(state.recipes);}
+  function toggleTag(el){const t=el.dataset.tag;el.classList.toggle('on');el.classList.contains('on')?state.tags.add(t):state.tags.delete(t);updateActiveCount();renderRecipes(state.recipes);}
+  function updateActiveCount(){const el=document.getElementById('active-count');const p=[];if(state.methods.size)p.push(state.methods.size+' 个烹饪方式');if(state.tags.size)p.push(state.tags.size+' 个标签');el.textContent=p.length?p.join(' · '):'全部显示';}
+  let st;function debounceSearch(){clearTimeout(st);state.search=document.getElementById('searchInput').value.trim();st=setTimeout(loadRecipes,350);}
+  function switchPanelTab(id){document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.ps').forEach(s=>s.classList.remove('active'));document.getElementById('ptab-'+id).classList.add('active');document.getElementById('ps-'+id).classList.add('active');}
+  function openAddModal(){switchPanelTab('photo');}
+  function singleChip(el,groupId){document.querySelectorAll('#'+groupId+' .mchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
+  function getActiveChip(groupId){const el=document.querySelector('#'+groupId+' .mchip.on');return el?el.textContent.trim():null;}
+  function setLoading(type,loading){const btn=document.getElementById(type+'SubmitBtn'),sp=document.getElementById(type+'Spinner'),tx=document.getElementById(type+'SubmitText');btn.disabled=loading;sp.style.display=loading?'block':'none';tx.style.opacity=loading?0.5:1;}
+  let tt;function showToast(msg,isError=false){const el=document.getElementById('toast');el.textContent=msg;el.className='toast'+(isError?' error':'');clearTimeout(tt);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));tt=setTimeout(()=>el.classList.remove('show'),3200);}
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRecipeModal();});
+  loadRecipes();
+  </script>
 </body>
 </html>
