@@ -184,6 +184,18 @@
     .modal-btn:hover{border-color:var(--accent);color:var(--accent);}
     .modal-btn.danger{border-color:#F0997B;color:#993C1D;background:#FAECE7;}
     .modal-btn.danger:hover{background:#F0997B;color:#fff;border-color:#F0997B;}
+    /* Photo upload zone */
+    .photo-upload-zone{border:1.5px dashed var(--border);border-radius:10px;padding:18px 14px;text-align:center;cursor:pointer;transition:background 0.15s,border-color 0.15s;position:relative;overflow:hidden;}
+    .photo-upload-zone:hover,.photo-upload-zone.dragover{background:rgba(122,144,96,0.06);border-color:var(--accent);}
+    .photo-upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+    .photo-preview-wrap{position:relative;width:100%;aspect-ratio:4/3;border-radius:8px;overflow:hidden;background:var(--surface);border:0.5px solid var(--border);}
+    .photo-preview-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+    .photo-preview-remove{position:absolute;top:6px;right:6px;background:rgba(46,53,40,0.7);color:#fff;border:none;border-radius:4px;padding:3px 7px;font-size:11px;cursor:pointer;transition:background 0.15s;}
+    .photo-preview-remove:hover{background:rgba(226,75,74,0.9);}
+    .photo-upload-hint{font-size:12px;color:var(--faint);margin-top:8px;}
+    /* Modal hero photo */
+    .modal-photo-wrap{width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--surface);}
+    .modal-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
     /* Edit modal */
     .edit-modal-overlay{display:none;position:fixed;inset:0;background:rgba(46,53,40,0.65);z-index:300;align-items:center;justify-content:center;padding:24px;}
     .edit-modal-overlay.open{display:flex;}
@@ -275,6 +287,20 @@
         <!-- Manual entry -->
         <div class="ps" id="ps-manual">
           <div class="field-group"><div class="field-label">食谱名称</div><input class="field-input" id="manualTitle" placeholder="例：妈妈的红烧肉" /></div>
+          <div class="field-group">
+            <div class="field-label">菜谱照片（选填）</div>
+            <div id="manualPhotoPreview" style="display:none;">
+              <div class="photo-preview-wrap">
+                <img id="manualPhotoImg" src="" alt="预览" />
+                <button class="photo-preview-remove" onclick="removePhoto('manual')">✕ 移除</button>
+              </div>
+            </div>
+            <div class="photo-upload-zone" id="manualPhotoZone" ondragover="photoDragOver(event,this)" ondragleave="photoDragLeave(this)" ondrop="photoDrop(event,'manual')">
+              <input type="file" accept="image/*" onchange="photoSelected(this,'manual')" />
+              <div style="font-size:22px;margin-bottom:6px;">📷</div>
+              <div class="photo-upload-hint">点击或拖拽上传照片</div>
+            </div>
+          </div>
           <div class="field-row">
             <div class="field-group"><div class="field-label">烹饪时间（分钟）</div><input class="field-input" id="manualTime" type="number" placeholder="30" /></div>
             <div class="field-group"><div class="field-label">份量（人数）</div><input class="field-input" id="manualServings" type="number" placeholder="4" /></div>
@@ -301,6 +327,9 @@
   <!-- Recipe View Modal -->
   <div class="modal-overlay" id="recipeModal" onclick="if(event.target===this)closeRecipeModal()">
     <div class="modal">
+      <div id="modalPhotoWrap" style="display:none;" class="modal-photo-wrap">
+        <img id="modalPhoto" src="" alt="" />
+      </div>
       <div class="modal-header">
         <div><div class="modal-title" id="modalTitle">—</div><div class="modal-meta" id="modalMeta">—</div></div>
         <button class="modal-close" onclick="closeRecipeModal()">✕</button>
@@ -336,6 +365,20 @@
       <div class="edit-modal-body">
         <input type="hidden" id="editId" />
         <div class="edit-field-group"><div class="edit-field-label">食谱名称</div><input class="edit-field-input" id="editTitle" /></div>
+        <div class="edit-field-group">
+          <div class="edit-field-label">菜谱照片</div>
+          <div id="editPhotoPreview" style="display:none;">
+            <div class="photo-preview-wrap">
+              <img id="editPhotoImg" src="" alt="预览" />
+              <button class="photo-preview-remove" onclick="removePhoto('edit')">✕ 移除</button>
+            </div>
+          </div>
+          <div class="photo-upload-zone" id="editPhotoZone" ondragover="photoDragOver(event,this)" ondragleave="photoDragLeave(this)" ondrop="photoDrop(event,'edit')">
+            <input type="file" accept="image/*" onchange="photoSelected(this,'edit')" />
+            <div style="font-size:22px;margin-bottom:6px;">📷</div>
+            <div class="photo-upload-hint">点击或拖拽上传新照片</div>
+          </div>
+        </div>
         <div class="edit-field-row">
           <div class="edit-field-group"><div class="edit-field-label">烹饪时间（分钟）</div><input class="edit-field-input" id="editTime" type="number" /></div>
           <div class="edit-field-group"><div class="edit-field-label">份量（人数）</div><input class="edit-field-input" id="editServings" type="number" /></div>
@@ -366,6 +409,48 @@
   const METHOD_MAP={'炸':'mb-fry','蒸':'mb-steam','烤':'mb-bake','煮':'mb-boil','炒':'mb-stirfry','煎':'mb-pan'};
   const CUISINE_LABEL={cn:'中餐',wn:'西餐'};
   let currentRecipeId=null;
+  // photo state: {manual: base64|null, edit: base64|null, editKept: base64|null}
+  const photoState={manual:null,edit:null,editKept:null};
+
+  // ── Photo helpers ──────────────────────────────
+  function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});}
+
+  async function photoSelected(input,ctx){
+    const file=input.files[0];if(!file)return;
+    const b64=await fileToBase64(file);
+    photoState[ctx]=b64;
+    if(ctx==='edit')photoState.editKept=null; // new photo replaces kept
+    showPhotoPreview(ctx,b64);
+    input.value='';
+  }
+
+  function showPhotoPreview(ctx,src){
+    document.getElementById(ctx+'PhotoPreview').style.display='block';
+    document.getElementById(ctx+'PhotoImg').src=src;
+    document.getElementById(ctx+'PhotoZone').style.display='none';
+  }
+
+  function removePhoto(ctx){
+    photoState[ctx]=null;
+    if(ctx==='edit')photoState.editKept=null;
+    document.getElementById(ctx+'PhotoPreview').style.display='none';
+    document.getElementById(ctx+'PhotoZone').style.display='block';
+    const img=document.getElementById(ctx+'PhotoImg');if(img)img.src='';
+  }
+
+  function photoDragOver(e,el){e.preventDefault();el.classList.add('dragover');}
+  function photoDragLeave(el){el.classList.remove('dragover');}
+  async function photoDrop(e,ctx){
+    e.preventDefault();
+    document.getElementById(ctx+'PhotoZone').classList.remove('dragover');
+    const file=e.dataTransfer.files[0];
+    if(file&&file.type.startsWith('image/')){
+      const b64=await fileToBase64(file);
+      photoState[ctx]=b64;
+      if(ctx==='edit')photoState.editKept=null;
+      showPhotoPreview(ctx,b64);
+    }
+  }
 
   async function api(path,options={}){
     const res=await fetch('/api'+path,{headers:{'Content-Type':'application/json'},...options});
@@ -421,7 +506,9 @@
     const mc=METHOD_MAP[r.method]||'mb-boil';
     const sc=r.source_type==='url'?'src-url':'src-manual';
     const t=r.time_minutes>=60?Math.floor(r.time_minutes/60)+' 小时'+(r.time_minutes%60?(r.time_minutes%60)+' 分钟':''):r.time_minutes+' 分钟';
-    const thumb=r.cuisine==='cn'?'🥢':'🍴';
+    const thumb=r.photo_url
+      ?`<img src="${r.photo_url}" alt="${r.title}" style="width:100%;height:100%;object-fit:cover;" />`
+      :(r.cuisine==='cn'?'🥢':'🍴');
     return`<div class="recipe-row" onclick="openRecipe(${r.id})"><div class="recipe-left"><div class="recipe-thumb">${thumb}</div><div><div class="recipe-title">${r.title}</div><div class="recipe-meta">${CUISINE_LABEL[r.cuisine]||r.cuisine} · ${t} · ${r.servings} 人份</div></div></div><div class="recipe-right"><span class="method-badge ${mc}">${r.method}</span><div class="src-dot ${sc}"></div></div></div>`;
   }
 
@@ -433,6 +520,7 @@
     document.getElementById('modalIngredients').innerHTML='';
     document.getElementById('modalSteps').innerHTML='';
     document.getElementById('modalTipsSection').style.display='none';
+    document.getElementById('modalPhotoWrap').style.display='none';
     document.getElementById('recipeModal').classList.add('open');
     try{
       const data=await api('/recipes/'+id);const r=data.recipe;
@@ -442,9 +530,10 @@
       document.getElementById('modalTags').innerHTML=(r.tags||[]).map(t=>`<span class="modal-tag">${t}</span>`).join('')||`<span class="modal-tag" style="color:var(--faint)">暂无标签</span>`;
       document.getElementById('modalIngredients').innerHTML=(r.ingredients||[]).map(i=>`<li class="ingredient-item"><div class="ingredient-dot"></div><span class="ingredient-name">${i.name}</span><span class="ingredient-qty">${i.qty}</span></li>`).join('')||`<li class="ingredient-item" style="color:var(--faint)">暂无食材信息</li>`;
       document.getElementById('modalSteps').innerHTML=(r.steps||[]).map((s,i)=>`<li class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></li>`).join('')||`<li class="step-item"><div class="step-text" style="color:var(--faint)">暂无步骤信息</div></li>`;
-      if(r.tips){
-        document.getElementById('modalTipsSection').style.display='block';
-        document.getElementById('modalTipsText').textContent=r.tips;
+      if(r.tips){document.getElementById('modalTipsSection').style.display='block';document.getElementById('modalTipsText').textContent=r.tips;}
+      if(r.photo_url){
+        document.getElementById('modalPhotoWrap').style.display='block';
+        document.getElementById('modalPhoto').src=r.photo_url;
       }
     }catch(err){document.getElementById('modalTitle').textContent='加载失败';document.getElementById('modalMeta').textContent=err.message;}
   }
@@ -456,9 +545,7 @@
     if(!confirm('确认删除这道食谱吗？此操作不可撤销。'))return;
     try{
       await api('/recipes/'+currentRecipeId,{method:'DELETE'});
-      showToast('✓ 食谱已删除');
-      closeRecipeModal();
-      loadRecipes();
+      showToast('✓ 食谱已删除');closeRecipeModal();loadRecipes();
     }catch(err){showToast('删除失败：'+err.message,true);}
   }
 
@@ -466,6 +553,16 @@
     if(!currentRecipeId)return;
     const r=state.recipes.find(x=>x.id===currentRecipeId);
     if(!r)return;
+    // reset photo state
+    photoState.edit=null;
+    photoState.editKept=r.photo_url||null;
+    document.getElementById('editPhotoPreview').style.display='none';
+    document.getElementById('editPhotoZone').style.display='block';
+    if(r.photo_url){
+      document.getElementById('editPhotoPreview').style.display='block';
+      document.getElementById('editPhotoImg').src=r.photo_url;
+      document.getElementById('editPhotoZone').style.display='none';
+    }
     document.getElementById('editId').value=r.id;
     document.getElementById('editTitle').value=r.title||'';
     document.getElementById('editTime').value=r.time_minutes||30;
@@ -493,18 +590,17 @@
     const stepsRaw=document.getElementById('editSteps').value.trim();
     const ingredients=ingredientsRaw?ingredientsRaw.split('\n').filter(Boolean).map(line=>{const parts=line.trim().split(/\s+/);const qty=parts.length>1?parts.slice(1).join(' '):'';return{name:parts[0],qty};}):[]; 
     const steps=stepsRaw?stepsRaw.split('\n').filter(Boolean):[];
+    // photo: new upload takes priority, otherwise keep existing, otherwise clear
+    const photo_url=photoState.edit||photoState.editKept||'';
     try{
       await api('/recipes/'+id,{method:'PUT',body:JSON.stringify({
         title,cuisine,method,tips:document.getElementById('editTips').value.trim(),
         time_minutes:parseInt(document.getElementById('editTime').value)||30,
         servings:parseInt(document.getElementById('editServings').value)||4,
         description:document.getElementById('editDesc').value.trim(),
-        tags,ingredients,steps
+        tags,ingredients,steps,photo_url
       })});
-      showToast('✓ 食谱已更新');
-      closeEditModal();
-      loadRecipes();
-      openRecipe(parseInt(id));
+      showToast('✓ 食谱已更新');closeEditModal();loadRecipes();openRecipe(parseInt(id));
     }catch(err){showToast('保存失败：'+err.message,true);}
   }
 
@@ -526,11 +622,13 @@
     const method=getActiveChip('manual-method-chips')||'煮';
     const tags=[...document.querySelectorAll('#manual-tag-chips .mchip.on')].map(c=>c.textContent.trim());
     const tips=document.getElementById('manualTips').value.trim();
+    const photo_url=photoState.manual||'';
     try{
-      const data=await api('/recipes',{method:'POST',body:JSON.stringify({title,cuisine,method,tips,time_minutes:parseInt(document.getElementById('manualTime').value)||30,servings:parseInt(document.getElementById('manualServings').value)||4,description:document.getElementById('manualDesc').value.trim(),tags,ingredients:[],steps:[],status:'published'})});
+      const data=await api('/recipes',{method:'POST',body:JSON.stringify({title,cuisine,method,tips,photo_url,time_minutes:parseInt(document.getElementById('manualTime').value)||30,servings:parseInt(document.getElementById('manualServings').value)||4,description:document.getElementById('manualDesc').value.trim(),tags,ingredients:[],steps:[],status:'published'})});
       showToast('✓ 食谱已发布');
       ['manualTitle','manualTime','manualServings','manualDesc','manualTips'].forEach(id=>document.getElementById(id).value='');
       document.querySelectorAll('#manual-tag-chips .mchip').forEach(c=>c.classList.remove('on'));
+      removePhoto('manual');
       loadRecipes();openRecipe(data.recipe.id);
     }catch(err){showToast('保存失败：'+err.message,true);}
     finally{setLoading('manual',false);}
