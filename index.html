@@ -89,7 +89,6 @@
     .mb-stirfry{background:var(--mb-stir-bg);color:var(--mb-stir-c);border-color:var(--mb-stir-b);}
     .mb-pan{background:var(--mb-pan-bg);color:var(--mb-pan-c);border-color:var(--mb-pan-b);}
     .src-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-    .src-photo{background:var(--cn);}
     .src-url{background:var(--wn);}
     .src-manual{background:#B4B2A9;}
     .state-box{padding:56px 0;text-align:center;}
@@ -113,17 +112,14 @@
     .panel-body{padding:18px;display:flex;flex-direction:column;gap:14px;flex:1;}
     .ps{display:none;flex-direction:column;gap:13px;flex:1;}
     .ps.active{display:flex;}
-    .upload-zone{border:0.5px dashed var(--border);border-radius:10px;padding:26px 16px;text-align:center;cursor:pointer;transition:background 0.15s,border-color 0.15s;}
-    .upload-zone:hover,.upload-zone.dragover{background:rgba(122,144,96,0.06);border-color:var(--accent);}
-    .upload-icon{width:36px;height:36px;border-radius:8px;background:var(--surface);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;margin:0 auto 10px;font-size:16px;overflow:hidden;}
-    .upload-title{font-size:13px;font-weight:300;color:var(--text);margin-bottom:3px;}
-    .upload-sub{font-size:11px;font-weight:300;color:var(--faint);}
-    #photoInput{display:none;}
     .field-group{display:flex;flex-direction:column;gap:5px;}
     .field-label{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);}
     .field-input{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color 0.15s;}
     .field-input:focus{border-color:var(--accent);}
     .field-input::placeholder{color:var(--faint);}
+    .field-textarea{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color 0.15s;resize:vertical;min-height:70px;line-height:1.6;}
+    .field-textarea:focus{border-color:var(--accent);}
+    .field-textarea::placeholder{color:var(--faint);}
     .field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
     .chip-row{display:flex;gap:6px;flex-wrap:wrap;}
     .mchip{padding:5px 11px;border-radius:20px;font-size:12px;font-weight:300;border:0.5px solid var(--border);cursor:pointer;background:transparent;color:var(--muted);transition:all 0.15s;user-select:none;}
@@ -152,9 +148,10 @@
     .src-legend{display:flex;gap:14px;margin-bottom:20px;align-items:center;}
     .src-legend-item{display:flex;align-items:center;gap:5px;font-family:'DM Sans',sans-serif;font-size:11px;color:var(--faint);}
     .src-legend-dot{width:7px;height:7px;border-radius:50%;}
+    /* Modal */
     .modal-overlay{display:none;position:fixed;inset:0;background:rgba(46,53,40,0.55);z-index:200;align-items:center;justify-content:center;padding:24px;}
     .modal-overlay.open{display:flex;}
-    .modal{background:var(--bg);border-radius:14px;width:100%;max-width:560px;max-height:82vh;overflow-y:auto;border:0.5px solid var(--border);animation:slideUp 0.2s ease;}
+    .modal{background:var(--bg);border-radius:14px;width:100%;max-width:560px;max-height:88vh;overflow-y:auto;border:0.5px solid var(--border);animation:slideUp 0.2s ease;}
     @keyframes slideUp{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}
     .modal-header{background:var(--dark);padding:20px 24px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px;}
     .modal-title{font-size:20px;font-weight:300;color:var(--logo);line-height:1.3;}
@@ -171,14 +168,41 @@
     .ingredient-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);flex-shrink:0;}
     .ingredient-name{flex:1;color:var(--text);}
     .ingredient-qty{color:var(--faint);font-family:'DM Sans',sans-serif;font-size:12px;}
-    .step-list{list-style:none;}
+    .step-list{list-style:none;margin-bottom:24px;}
     .step-item{display:flex;gap:14px;margin-bottom:18px;}
     .step-num{width:26px;height:26px;border-radius:50%;background:var(--dark);color:var(--logo);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
     .step-text{font-size:13px;font-weight:300;color:var(--text);line-height:1.7;flex:1;}
-    .draft-banner{background:#FAEEDA;border:0.5px solid #EF9F27;border-radius:8px;padding:10px 14px;margin-bottom:18px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
-    .draft-banner-text{font-size:12px;color:#854F0B;}
-    .draft-publish-btn{background:var(--dark);color:var(--logo);border:none;border-radius:6px;padding:6px 12px;font-family:'Noto Sans SC',sans-serif;font-size:12px;font-weight:300;cursor:pointer;white-space:nowrap;transition:background 0.15s;}
-    .draft-publish-btn:hover{background:#3e4a35;}
+    /* Tips box */
+    .tips-box{background:#FFFBF0;border:0.5px solid #EFD98A;border-radius:10px;padding:14px 16px;margin-bottom:24px;}
+    .tips-box-header{display:flex;align-items:center;gap:6px;margin-bottom:10px;}
+    .tips-box-icon{font-size:14px;}
+    .tips-box-label{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#9A7A1A;}
+    .tips-box-text{font-size:13px;font-weight:300;color:#5C4B10;line-height:1.7;}
+    /* Modal action buttons */
+    .modal-actions{display:flex;gap:10px;padding:0 24px 24px;flex-wrap:wrap;}
+    .modal-btn{flex:1;padding:10px;border-radius:8px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;cursor:pointer;border:0.5px solid var(--border);background:var(--surface);color:var(--muted);transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;min-width:80px;}
+    .modal-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .modal-btn.danger{border-color:#F0997B;color:#993C1D;background:#FAECE7;}
+    .modal-btn.danger:hover{background:#F0997B;color:#fff;border-color:#F0997B;}
+    /* Edit modal */
+    .edit-modal-overlay{display:none;position:fixed;inset:0;background:rgba(46,53,40,0.65);z-index:300;align-items:center;justify-content:center;padding:24px;}
+    .edit-modal-overlay.open{display:flex;}
+    .edit-modal{background:var(--bg);border-radius:14px;width:100%;max-width:580px;max-height:90vh;overflow-y:auto;border:0.5px solid var(--border);animation:slideUp 0.2s ease;}
+    .edit-modal-header{background:var(--dark);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .edit-modal-title{font-size:16px;font-weight:300;color:var(--logo);}
+    .edit-modal-body{padding:22px;display:flex;flex-direction:column;gap:14px;}
+    .edit-field-group{display:flex;flex-direction:column;gap:5px;}
+    .edit-field-label{font-family:'DM Sans',sans-serif;font-size:11px;color:var(--muted);}
+    .edit-field-input{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color 0.15s;}
+    .edit-field-input:focus{border-color:var(--accent);}
+    .edit-field-textarea{width:100%;background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:9px 12px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;color:var(--text);outline:none;transition:border-color 0.15s;resize:vertical;min-height:80px;line-height:1.6;}
+    .edit-field-textarea:focus{border-color:var(--accent);}
+    .edit-field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+    .edit-actions{display:flex;gap:10px;padding:16px 22px;border-top:0.5px solid var(--border);}
+    .edit-save-btn{flex:2;background:var(--dark);color:var(--logo);border:none;border-radius:8px;padding:11px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;cursor:pointer;transition:background 0.15s;}
+    .edit-save-btn:hover{background:#3e4a35;}
+    .edit-cancel-btn{flex:1;background:transparent;color:var(--muted);border:0.5px solid var(--border);border-radius:8px;padding:11px;font-family:'Noto Sans SC',sans-serif;font-size:13px;font-weight:300;cursor:pointer;transition:all 0.15s;}
+    .edit-cancel-btn:hover{border-color:var(--accent);color:var(--accent);}
     @media(max-width:768px){.main{grid-template-columns:1fr;}.panel{display:none;}.topnav,.cuisine-bar,.filter-bar,.feed{padding-left:16px;padding-right:16px;}.nav-search{max-width:180px;}}
   </style>
 </head>
@@ -193,7 +217,7 @@
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#D4DEC4" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#D4DEC4" stroke-width="1.5" stroke-linecap="round"/></svg>
       <input id="searchInput" placeholder="搜索食谱或食材..." oninput="debounceSearch()" />
     </div>
-    <div class="nav-right"><button class="btn-add" onclick="openAddModal()">+ 添加食谱</button></div>
+    <div class="nav-right"><button class="btn-add" onclick="openAddPanel()">+ 添加食谱</button></div>
   </nav>
   <div class="cuisine-bar">
     <div class="ctab active" onclick="switchCuisine('all',this)"><div class="ctab-dot" style="background:#8A9880"></div><span class="ctab-label">全部</span><span class="ctab-count" id="count-all">—</span></div>
@@ -229,7 +253,6 @@
   <div class="main">
     <div class="feed" id="feed">
       <div class="src-legend">
-        <div class="src-legend-item"><div class="src-legend-dot src-photo"></div>照片导入</div>
         <div class="src-legend-item"><div class="src-legend-dot src-url"></div>链接导入</div>
         <div class="src-legend-item"><div class="src-legend-dot src-manual"></div>手动输入</div>
       </div>
@@ -237,29 +260,19 @@
     </div>
     <div class="panel">
       <div class="panel-tabs">
-        <div class="ptab active" id="ptab-photo" onclick="switchPanelTab('photo')">📷 照片</div>
-        <div class="ptab" id="ptab-url" onclick="switchPanelTab('url')">🔗 链接</div>
-        <div class="ptab" id="ptab-manual" onclick="switchPanelTab('manual')">✏️ 手动</div>
+        <div class="ptab active" id="ptab-url" onclick="switchPanelTab('url')">🔗 链接导入</div>
+        <div class="ptab" id="ptab-manual" onclick="switchPanelTab('manual')">✏️ 手动添加</div>
       </div>
       <div class="panel-body">
-        <div class="ps active" id="ps-photo">
-          <div class="upload-zone" id="photoDropZone" onclick="document.getElementById('photoInput').click()">
-            <input type="file" id="photoInput" accept="image/*" onchange="handlePhotoSelected(this)" />
-            <div class="upload-icon" id="photoPreviewIcon">📷</div>
-            <div class="upload-title" id="photoUploadTitle">上传食谱照片</div>
-            <div class="upload-sub" id="photoUploadSub">AI 将自动提取食材与步骤</div>
-          </div>
-          <div class="field-group"><div class="field-label">菜系</div><div class="chip-row" id="photo-cuisine-chips"><div class="mchip on" onclick="singleChip(this,'photo-cuisine-chips')">中餐</div><div class="mchip" onclick="singleChip(this,'photo-cuisine-chips')">西餐</div></div></div>
-          <div class="field-group"><div class="field-label">烹饪方式</div><div class="chip-row" id="photo-method-chips"><div class="mchip" onclick="singleChip(this,'photo-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">蒸</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">烤</div><div class="mchip on" onclick="singleChip(this,'photo-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'photo-method-chips')">煎</div></div></div>
-          <button class="submit-btn" id="photoSubmitBtn" onclick="submitPhoto()"><div class="spinner" id="photoSpinner"></div><span id="photoSubmitText">AI 提取食谱 →</span></button>
-        </div>
-        <div class="ps" id="ps-url">
+        <!-- URL import -->
+        <div class="ps active" id="ps-url">
           <div class="field-group"><div class="field-label">食谱链接</div><input class="field-input" id="urlInput" placeholder="https://..." /></div>
           <div class="import-info"><div class="import-info-title">AI 将自动导入</div><div class="import-info-list">✓ 食谱名称与简介<br>✓ 食材与用量<br>✓ 详细烹饪步骤<br>✓ 烹饪方式与时间</div></div>
           <div class="field-group"><div class="field-label">菜系</div><div class="chip-row" id="url-cuisine-chips"><div class="mchip" onclick="singleChip(this,'url-cuisine-chips')">中餐</div><div class="mchip on" onclick="singleChip(this,'url-cuisine-chips')">西餐</div></div></div>
           <div class="field-group"><div class="field-label">烹饪方式</div><div class="chip-row" id="url-method-chips"><div class="mchip" onclick="singleChip(this,'url-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">蒸</div><div class="mchip on" onclick="singleChip(this,'url-method-chips')">烤</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'url-method-chips')">煎</div></div></div>
-          <button class="submit-btn" id="urlSubmitBtn" onclick="submitUrl()"><div class="spinner" id="urlSpinner"></div><span id="urlSubmitText">导入并预览 →</span></button>
+          <button class="submit-btn" id="urlSubmitBtn" onclick="submitUrl()"><div class="spinner" id="urlSpinner"></div><span id="urlSubmitText">导入并发布 →</span></button>
         </div>
+        <!-- Manual entry -->
         <div class="ps" id="ps-manual">
           <div class="field-group"><div class="field-label">食谱名称</div><input class="field-input" id="manualTitle" placeholder="例：妈妈的红烧肉" /></div>
           <div class="field-row">
@@ -267,10 +280,11 @@
             <div class="field-group"><div class="field-label">份量（人数）</div><input class="field-input" id="manualServings" type="number" placeholder="4" /></div>
           </div>
           <div class="field-group"><div class="field-label">描述（选填）</div><input class="field-input" id="manualDesc" placeholder="简短介绍这道菜..." /></div>
+          <div class="field-group"><div class="field-label">烹饪小贴士（选填）</div><textarea class="field-textarea" id="manualTips" placeholder="例：火候不宜过大，收汁时要不停搅拌…"></textarea></div>
           <div class="field-group"><div class="field-label">菜系</div><div class="chip-row" id="manual-cuisine-chips"><div class="mchip on" onclick="singleChip(this,'manual-cuisine-chips')">中餐</div><div class="mchip" onclick="singleChip(this,'manual-cuisine-chips')">西餐</div></div></div>
           <div class="field-group"><div class="field-label">烹饪方式</div><div class="chip-row" id="manual-method-chips"><div class="mchip" onclick="singleChip(this,'manual-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">蒸</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">烤</div><div class="mchip on" onclick="singleChip(this,'manual-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'manual-method-chips')">煎</div></div></div>
           <div class="field-group"><div class="field-label">标签（选填）</div><div class="chip-row" id="manual-tag-chips"><div class="mchip" onclick="this.classList.toggle('on')">快手菜</div><div class="mchip" onclick="this.classList.toggle('on')">素食</div><div class="mchip" onclick="this.classList.toggle('on')">聚会</div><div class="mchip" onclick="this.classList.toggle('on')">家常</div><div class="mchip" onclick="this.classList.toggle('on')">周末</div><div class="mchip" onclick="this.classList.toggle('on')">低卡</div></div></div>
-          <button class="submit-btn" id="manualSubmitBtn" onclick="submitManual()"><div class="spinner" id="manualSpinner"></div><span id="manualSubmitText">保存草稿 →</span></button>
+          <button class="submit-btn" id="manualSubmitBtn" onclick="submitManual()"><div class="spinner" id="manualSpinner"></div><span id="manualSubmitText">发布食谱 →</span></button>
         </div>
         <div class="ai-card">
           <div class="ai-header"><div class="ai-pulse"></div><div class="ai-title">AI 为你推荐</div></div>
@@ -284,7 +298,7 @@
     </div>
   </div>
 
-  <!-- Recipe Modal -->
+  <!-- Recipe View Modal -->
   <div class="modal-overlay" id="recipeModal" onclick="if(event.target===this)closeRecipeModal()">
     <div class="modal">
       <div class="modal-header">
@@ -292,13 +306,57 @@
         <button class="modal-close" onclick="closeRecipeModal()">✕</button>
       </div>
       <div class="modal-body">
-        <div id="modalDraftBanner"></div>
         <div class="modal-section-label">标签</div>
         <div class="modal-tags" id="modalTags"></div>
         <div class="modal-section-label">食材</div>
         <ul class="ingredient-list" id="modalIngredients"></ul>
         <div class="modal-section-label">烹饪步骤</div>
         <ol class="step-list" id="modalSteps"></ol>
+        <div id="modalTipsSection" style="display:none;">
+          <div class="tips-box">
+            <div class="tips-box-header"><span class="tips-box-icon">💡</span><span class="tips-box-label">烹饪小贴士</span></div>
+            <div class="tips-box-text" id="modalTipsText"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-actions" id="modalActions">
+        <button class="modal-btn" onclick="openEditModal()">✏️ 修改</button>
+        <button class="modal-btn danger" onclick="deleteCurrentRecipe()">🗑 删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="edit-modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+    <div class="edit-modal">
+      <div class="edit-modal-header">
+        <div class="edit-modal-title">修改食谱</div>
+        <button class="modal-close" onclick="closeEditModal()">✕</button>
+      </div>
+      <div class="edit-modal-body">
+        <input type="hidden" id="editId" />
+        <div class="edit-field-group"><div class="edit-field-label">食谱名称</div><input class="edit-field-input" id="editTitle" /></div>
+        <div class="edit-field-row">
+          <div class="edit-field-group"><div class="edit-field-label">烹饪时间（分钟）</div><input class="edit-field-input" id="editTime" type="number" /></div>
+          <div class="edit-field-group"><div class="edit-field-label">份量（人数）</div><input class="edit-field-input" id="editServings" type="number" /></div>
+        </div>
+        <div class="edit-field-group"><div class="edit-field-label">描述</div><input class="edit-field-input" id="editDesc" /></div>
+        <div class="edit-field-group"><div class="edit-field-label">烹饪小贴士</div><textarea class="edit-field-textarea" id="editTips" placeholder="烹饪时需要注意的事项…"></textarea></div>
+        <div class="edit-field-group"><div class="edit-field-label">菜系</div><div class="chip-row" id="edit-cuisine-chips"><div class="mchip" onclick="singleChip(this,'edit-cuisine-chips')">中餐</div><div class="mchip" onclick="singleChip(this,'edit-cuisine-chips')">西餐</div></div></div>
+        <div class="edit-field-group"><div class="edit-field-label">烹饪方式</div><div class="chip-row" id="edit-method-chips"><div class="mchip" onclick="singleChip(this,'edit-method-chips')">炸</div><div class="mchip" onclick="singleChip(this,'edit-method-chips')">蒸</div><div class="mchip" onclick="singleChip(this,'edit-method-chips')">烤</div><div class="mchip" onclick="singleChip(this,'edit-method-chips')">煮</div><div class="mchip" onclick="singleChip(this,'edit-method-chips')">炒</div><div class="mchip" onclick="singleChip(this,'edit-method-chips')">煎</div></div></div>
+        <div class="edit-field-group"><div class="edit-field-label">标签</div><div class="chip-row" id="edit-tag-chips"><div class="mchip" onclick="this.classList.toggle('on')">快手菜</div><div class="mchip" onclick="this.classList.toggle('on')">素食</div><div class="mchip" onclick="this.classList.toggle('on')">聚会</div><div class="mchip" onclick="this.classList.toggle('on')">家常</div><div class="mchip" onclick="this.classList.toggle('on')">周末</div><div class="mchip" onclick="this.classList.toggle('on')">低卡</div></div></div>
+        <div class="edit-field-group">
+          <div class="edit-field-label">食材（每行一条，格式：食材名 用量）</div>
+          <textarea class="edit-field-textarea" id="editIngredients" style="min-height:100px;"></textarea>
+        </div>
+        <div class="edit-field-group">
+          <div class="edit-field-label">烹饪步骤（每行一步）</div>
+          <textarea class="edit-field-textarea" id="editSteps" style="min-height:120px;"></textarea>
+        </div>
+      </div>
+      <div class="edit-actions">
+        <button class="edit-cancel-btn" onclick="closeEditModal()">取消</button>
+        <button class="edit-save-btn" onclick="saveEdit()">保存修改</button>
       </div>
     </div>
   </div>
@@ -307,6 +365,7 @@
   const state={cuisine:'all',methods:new Set(),tags:new Set(),sort:'newest',search:'',recipes:[]};
   const METHOD_MAP={'炸':'mb-fry','蒸':'mb-steam','烤':'mb-bake','煮':'mb-boil','炒':'mb-stirfry','煎':'mb-pan'};
   const CUISINE_LABEL={cn:'中餐',wn:'西餐'};
+  let currentRecipeId=null;
 
   async function api(path,options={}){
     const res=await fetch('/api'+path,{headers:{'Content-Type':'application/json'},...options});
@@ -360,66 +419,94 @@
 
   function buildRow(r){
     const mc=METHOD_MAP[r.method]||'mb-boil';
-    const sc=r.source_type==='photo'?'src-photo':r.source_type==='url'?'src-url':'src-manual';
+    const sc=r.source_type==='url'?'src-url':'src-manual';
     const t=r.time_minutes>=60?Math.floor(r.time_minutes/60)+' 小时'+(r.time_minutes%60?(r.time_minutes%60)+' 分钟':''):r.time_minutes+' 分钟';
-    const draft=r.status==='draft'?`<span style="font-size:10px;color:#854F0B;background:#FEF4EA;padding:2px 6px;border-radius:4px;border:0.5px solid #FAC775;margin-left:6px;">草稿</span>`:'';
-    const thumb=r.photo_url?`<img src="${r.photo_url}" alt="${r.title}" />`:(r.cuisine==='cn'?'🥢':'🍴');
-    return`<div class="recipe-row" onclick="openRecipe(${r.id})"><div class="recipe-left"><div class="recipe-thumb">${thumb}</div><div><div class="recipe-title">${r.title}${draft}</div><div class="recipe-meta">${CUISINE_LABEL[r.cuisine]||r.cuisine} · ${t} · ${r.servings} 人份</div></div></div><div class="recipe-right"><span class="method-badge ${mc}">${r.method}</span><div class="src-dot ${sc}"></div></div></div>`;
+    const thumb=r.cuisine==='cn'?'🥢':'🍴';
+    return`<div class="recipe-row" onclick="openRecipe(${r.id})"><div class="recipe-left"><div class="recipe-thumb">${thumb}</div><div><div class="recipe-title">${r.title}</div><div class="recipe-meta">${CUISINE_LABEL[r.cuisine]||r.cuisine} · ${t} · ${r.servings} 人份</div></div></div><div class="recipe-right"><span class="method-badge ${mc}">${r.method}</span><div class="src-dot ${sc}"></div></div></div>`;
   }
 
   async function openRecipe(id){
+    currentRecipeId=id;
     document.getElementById('modalTitle').textContent='加载中…';
     document.getElementById('modalMeta').textContent='';
     document.getElementById('modalTags').innerHTML='';
     document.getElementById('modalIngredients').innerHTML='';
     document.getElementById('modalSteps').innerHTML='';
-    document.getElementById('modalDraftBanner').innerHTML='';
+    document.getElementById('modalTipsSection').style.display='none';
     document.getElementById('recipeModal').classList.add('open');
     try{
       const data=await api('/recipes/'+id);const r=data.recipe;
       const t=r.time_minutes>=60?Math.floor(r.time_minutes/60)+' 小时'+(r.time_minutes%60?(r.time_minutes%60)+' 分钟':''):r.time_minutes+' 分钟';
       document.getElementById('modalTitle').textContent=r.title;
       document.getElementById('modalMeta').textContent=`${CUISINE_LABEL[r.cuisine]||r.cuisine} · ${r.method} · ${t} · ${r.servings} 人份`;
-      if(r.status==='draft')document.getElementById('modalDraftBanner').innerHTML=`<div class="draft-banner"><div class="draft-banner-text">⚠️ 此食谱为草稿，尚未对访客显示</div><button class="draft-publish-btn" onclick="publishRecipe(${r.id})">发布食谱</button></div>`;
       document.getElementById('modalTags').innerHTML=(r.tags||[]).map(t=>`<span class="modal-tag">${t}</span>`).join('')||`<span class="modal-tag" style="color:var(--faint)">暂无标签</span>`;
       document.getElementById('modalIngredients').innerHTML=(r.ingredients||[]).map(i=>`<li class="ingredient-item"><div class="ingredient-dot"></div><span class="ingredient-name">${i.name}</span><span class="ingredient-qty">${i.qty}</span></li>`).join('')||`<li class="ingredient-item" style="color:var(--faint)">暂无食材信息</li>`;
       document.getElementById('modalSteps').innerHTML=(r.steps||[]).map((s,i)=>`<li class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></li>`).join('')||`<li class="step-item"><div class="step-text" style="color:var(--faint)">暂无步骤信息</div></li>`;
+      if(r.tips){
+        document.getElementById('modalTipsSection').style.display='block';
+        document.getElementById('modalTipsText').textContent=r.tips;
+      }
     }catch(err){document.getElementById('modalTitle').textContent='加载失败';document.getElementById('modalMeta').textContent=err.message;}
   }
 
-  function closeRecipeModal(){document.getElementById('recipeModal').classList.remove('open');}
+  function closeRecipeModal(){document.getElementById('recipeModal').classList.remove('open');currentRecipeId=null;}
 
-  async function publishRecipe(id){
-    try{await api('/recipes/'+id+'/publish',{method:'PATCH'});showToast('✓ 食谱已发布');closeRecipeModal();loadRecipes();}
-    catch(err){showToast('发布失败：'+err.message,true);}
-  }
-
-  let selectedPhotoFile=null;
-  function handlePhotoSelected(input){
-    const file=input.files[0];if(!file)return;
-    selectedPhotoFile=file;
-    const url=URL.createObjectURL(file);
-    document.getElementById('photoPreviewIcon').innerHTML=`<img src="${url}" style="width:100%;height:100%;object-fit:cover;border-radius:6px;" />`;
-    document.getElementById('photoUploadTitle').textContent=file.name;
-    document.getElementById('photoUploadSub').textContent=(file.size/1024).toFixed(0)+' KB · 点击更换';
-  }
-  const dz=document.getElementById('photoDropZone');
-  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('dragover');});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('dragover'));
-  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('dragover');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/')){const dt=new DataTransfer();dt.items.add(f);const inp=document.getElementById('photoInput');inp.files=dt.files;handlePhotoSelected(inp);}});
-
-  async function submitPhoto(){
-    if(!selectedPhotoFile){showToast('请先选择图片',true);return;}
-    setLoading('photo',true);
+  async function deleteCurrentRecipe(){
+    if(!currentRecipeId)return;
+    if(!confirm('确认删除这道食谱吗？此操作不可撤销。'))return;
     try{
-      const fd=new FormData();fd.append('photo',selectedPhotoFile);
-      const res=await fetch('/api/import/photo',{method:'POST',body:fd});
-      const data=await res.json();if(!data.success)throw new Error(data.error);
-      showToast('✓ '+data.message);resetPhotoForm();loadRecipes();openRecipe(data.recipe.id);
-    }catch(err){showToast('提取失败：'+err.message,true);}
-    finally{setLoading('photo',false);}
+      await api('/recipes/'+currentRecipeId,{method:'DELETE'});
+      showToast('✓ 食谱已删除');
+      closeRecipeModal();
+      loadRecipes();
+    }catch(err){showToast('删除失败：'+err.message,true);}
   }
-  function resetPhotoForm(){selectedPhotoFile=null;document.getElementById('photoInput').value='';document.getElementById('photoPreviewIcon').innerHTML='📷';document.getElementById('photoUploadTitle').textContent='上传食谱照片';document.getElementById('photoUploadSub').textContent='AI 将自动提取食材与步骤';}
+
+  function openEditModal(){
+    if(!currentRecipeId)return;
+    const r=state.recipes.find(x=>x.id===currentRecipeId);
+    if(!r)return;
+    document.getElementById('editId').value=r.id;
+    document.getElementById('editTitle').value=r.title||'';
+    document.getElementById('editTime').value=r.time_minutes||30;
+    document.getElementById('editServings').value=r.servings||4;
+    document.getElementById('editDesc').value=r.description||'';
+    document.getElementById('editTips').value=r.tips||'';
+    document.querySelectorAll('#edit-cuisine-chips .mchip').forEach(c=>c.classList.toggle('on',(r.cuisine==='cn'?'中餐':'西餐')===c.textContent));
+    document.querySelectorAll('#edit-method-chips .mchip').forEach(c=>c.classList.toggle('on',c.textContent===r.method));
+    document.querySelectorAll('#edit-tag-chips .mchip').forEach(c=>c.classList.toggle('on',(r.tags||[]).includes(c.textContent.trim())));
+    document.getElementById('editIngredients').value=(r.ingredients||[]).map(i=>i.name+(i.qty?' '+i.qty:'')).join('\n');
+    document.getElementById('editSteps').value=(r.steps||[]).join('\n');
+    document.getElementById('editModal').classList.add('open');
+  }
+
+  function closeEditModal(){document.getElementById('editModal').classList.remove('open');}
+
+  async function saveEdit(){
+    const id=document.getElementById('editId').value;
+    const title=document.getElementById('editTitle').value.trim();
+    if(!title){showToast('请输入食谱名称',true);return;}
+    const cuisine=getActiveChip('edit-cuisine-chips')==='西餐'?'wn':'cn';
+    const method=getActiveChip('edit-method-chips')||'煮';
+    const tags=[...document.querySelectorAll('#edit-tag-chips .mchip.on')].map(c=>c.textContent.trim());
+    const ingredientsRaw=document.getElementById('editIngredients').value.trim();
+    const stepsRaw=document.getElementById('editSteps').value.trim();
+    const ingredients=ingredientsRaw?ingredientsRaw.split('\n').filter(Boolean).map(line=>{const parts=line.trim().split(/\s+/);const qty=parts.length>1?parts.slice(1).join(' '):'';return{name:parts[0],qty};}):[]; 
+    const steps=stepsRaw?stepsRaw.split('\n').filter(Boolean):[];
+    try{
+      await api('/recipes/'+id,{method:'PUT',body:JSON.stringify({
+        title,cuisine,method,tips:document.getElementById('editTips').value.trim(),
+        time_minutes:parseInt(document.getElementById('editTime').value)||30,
+        servings:parseInt(document.getElementById('editServings').value)||4,
+        description:document.getElementById('editDesc').value.trim(),
+        tags,ingredients,steps
+      })});
+      showToast('✓ 食谱已更新');
+      closeEditModal();
+      loadRecipes();
+      openRecipe(parseInt(id));
+    }catch(err){showToast('保存失败：'+err.message,true);}
+  }
 
   async function submitUrl(){
     const url=document.getElementById('urlInput').value.trim();
@@ -438,10 +525,11 @@
     const cuisine=getActiveChip('manual-cuisine-chips')==='西餐'?'wn':'cn';
     const method=getActiveChip('manual-method-chips')||'煮';
     const tags=[...document.querySelectorAll('#manual-tag-chips .mchip.on')].map(c=>c.textContent.trim());
+    const tips=document.getElementById('manualTips').value.trim();
     try{
-      const data=await api('/recipes',{method:'POST',body:JSON.stringify({title,cuisine,method,time_minutes:parseInt(document.getElementById('manualTime').value)||30,servings:parseInt(document.getElementById('manualServings').value)||4,description:document.getElementById('manualDesc').value.trim(),tags,ingredients:[],steps:[],status:'draft'})});
-      showToast('✓ 食谱已保存为草稿，点击可查看和发布');
-      ['manualTitle','manualTime','manualServings','manualDesc'].forEach(id=>document.getElementById(id).value='');
+      const data=await api('/recipes',{method:'POST',body:JSON.stringify({title,cuisine,method,tips,time_minutes:parseInt(document.getElementById('manualTime').value)||30,servings:parseInt(document.getElementById('manualServings').value)||4,description:document.getElementById('manualDesc').value.trim(),tags,ingredients:[],steps:[],status:'published'})});
+      showToast('✓ 食谱已发布');
+      ['manualTitle','manualTime','manualServings','manualDesc','manualTips'].forEach(id=>document.getElementById(id).value='');
       document.querySelectorAll('#manual-tag-chips .mchip').forEach(c=>c.classList.remove('on'));
       loadRecipes();openRecipe(data.recipe.id);
     }catch(err){showToast('保存失败：'+err.message,true);}
@@ -470,12 +558,12 @@
   function updateActiveCount(){const el=document.getElementById('active-count');const p=[];if(state.methods.size)p.push(state.methods.size+' 个烹饪方式');if(state.tags.size)p.push(state.tags.size+' 个标签');el.textContent=p.length?p.join(' · '):'全部显示';}
   let st;function debounceSearch(){clearTimeout(st);state.search=document.getElementById('searchInput').value.trim();st=setTimeout(loadRecipes,350);}
   function switchPanelTab(id){document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.ps').forEach(s=>s.classList.remove('active'));document.getElementById('ptab-'+id).classList.add('active');document.getElementById('ps-'+id).classList.add('active');}
-  function openAddModal(){switchPanelTab('photo');}
+  function openAddPanel(){switchPanelTab('manual');}
   function singleChip(el,groupId){document.querySelectorAll('#'+groupId+' .mchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
   function getActiveChip(groupId){const el=document.querySelector('#'+groupId+' .mchip.on');return el?el.textContent.trim():null;}
   function setLoading(type,loading){const btn=document.getElementById(type+'SubmitBtn'),sp=document.getElementById(type+'Spinner'),tx=document.getElementById(type+'SubmitText');btn.disabled=loading;sp.style.display=loading?'block':'none';tx.style.opacity=loading?0.5:1;}
   let tt;function showToast(msg,isError=false){const el=document.getElementById('toast');el.textContent=msg;el.className='toast'+(isError?' error':'');clearTimeout(tt);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));tt=setTimeout(()=>el.classList.remove('show'),3200);}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeRecipeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEditModal();closeRecipeModal();}});
   loadRecipes();
   </script>
 </body>

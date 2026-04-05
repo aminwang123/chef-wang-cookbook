@@ -186,11 +186,11 @@ app.get('/api/recipes/:id', (req, res) => {
 app.post('/api/recipes', (req, res) => {
   try {
     const { title, cuisine='cn', method='煮', time_minutes=30, servings=4,
-            tags=[], ingredients=[], steps=[], description='',
-            source_url='', photo_url='', status='draft' } = req.body;
+            tags=[], ingredients=[], steps=[], description='', tips='',
+            source_url='', photo_url='', status='published' } = req.body;
     if (!title) return res.status(400).json({ success: false, error: '食谱名称不能为空' });
     const recipe = insert({ title, cuisine, method, time_minutes: parseInt(time_minutes),
-      servings: parseInt(servings), tags, ingredients, steps, description,
+      servings: parseInt(servings), tags, ingredients, steps, description, tips,
       source_type: 'manual', source_url, photo_url, status });
     res.status(201).json({ success: true, recipe });
   } catch(err) { res.status(500).json({ success: false, error: err.message }); }
@@ -294,8 +294,8 @@ app.post('/api/import/url', async (req, res) => {
     const extracted = parseAIJson(raw);
     if (extracted.error) return res.status(422).json({ success: false, error: extracted.error });
 
-    const recipe = insert({ ...extracted, source_type:'url', source_url:url, photo_url:'', status:'draft' });
-    res.json({ success: true, recipe, message: 'AI 已从链接提取食谱，请审核后发布' });
+    const recipe = insert({ ...extracted, source_type:'url', source_url:url, photo_url:'', tips:'', status:'published' });
+    res.json({ success: true, recipe, message: 'AI 已从链接提取食谱并发布' });
   } catch(err) {
     if (err instanceof SyntaxError) res.status(422).json({ success: false, error: 'AI 返回格式错误，请重试' });
     else res.status(500).json({ success: false, error: err.message });
