@@ -75,7 +75,7 @@
     .recipe-row:last-child{border-bottom:none;}
     .recipe-row:hover{background:rgba(122,144,96,0.05);padding-left:6px;padding-right:6px;margin:0 -6px;}
     .recipe-left{display:flex;align-items:center;gap:14px;}
-    .recipe-thumb{width:48px;height:48px;border-radius:10px;background:var(--surface);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:transform 0.15s;overflow:hidden;}
+    .recipe-thumb{width:48px;height:48px;border-radius:50%;background:var(--surface);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;transition:transform 0.15s;overflow:hidden;}
     .recipe-thumb img{width:100%;height:100%;object-fit:cover;}
     .recipe-row:hover .recipe-thumb{transform:scale(1.05);}
     .recipe-title{font-size:14px;font-weight:300;color:var(--text);line-height:1.4;}
@@ -193,9 +193,30 @@
     .photo-preview-remove{position:absolute;top:6px;right:6px;background:rgba(46,53,40,0.7);color:#fff;border:none;border-radius:4px;padding:3px 7px;font-size:11px;cursor:pointer;transition:background 0.15s;}
     .photo-preview-remove:hover{background:rgba(226,75,74,0.9);}
     .photo-upload-hint{font-size:12px;color:var(--faint);margin-top:8px;}
-    /* Modal hero photo */
-    .modal-photo-wrap{width:100%;aspect-ratio:16/9;overflow:hidden;background:var(--surface);}
-    .modal-photo-wrap img{width:100%;height:100%;object-fit:cover;display:block;}
+    /* Modal hero photo — circular */
+    .modal-photo-wrap{width:100%;display:flex;justify-content:center;padding:24px 0 8px;background:var(--dark);}
+    .modal-photo-circle{width:120px;height:120px;border-radius:50%;overflow:hidden;border:3px solid rgba(212,222,196,0.25);box-shadow:0 4px 24px rgba(0,0,0,0.25);flex-shrink:0;}
+    .modal-photo-circle img{width:100%;height:100%;object-fit:cover;display:block;}
+    /* Photo upload preview — circular */
+    .photo-preview-wrap{position:relative;display:flex;flex-direction:column;align-items:center;padding:8px 0;}
+    .photo-circle-frame{width:110px;height:110px;border-radius:50%;overflow:hidden;border:2px solid var(--border);background:var(--surface);flex-shrink:0;}
+    .photo-circle-frame img{width:100%;height:100%;object-fit:cover;display:block;}
+    .photo-preview-remove{margin-top:8px;background:rgba(46,53,40,0.7);color:#fff;border:none;border-radius:4px;padding:3px 10px;font-size:11px;cursor:pointer;transition:background 0.15s;}
+    .photo-preview-remove:hover{background:rgba(226,75,74,0.9);}
+    /* Admin — login modal */
+    .login-modal-overlay{display:none;position:fixed;inset:0;background:rgba(46,53,40,0.7);z-index:500;align-items:center;justify-content:center;padding:24px;}
+    .login-modal-overlay.open{display:flex;}
+    .login-modal{background:var(--bg);border-radius:14px;width:100%;max-width:360px;border:0.5px solid var(--border);animation:slideUp 0.2s ease;overflow:hidden;}
+    .login-modal-header{background:var(--dark);padding:20px 24px;display:flex;align-items:center;justify-content:space-between;}
+    .login-modal-title{font-size:16px;font-weight:300;color:var(--logo);display:flex;align-items:center;gap:8px;}
+    .login-modal-body{padding:24px;display:flex;flex-direction:column;gap:14px;}
+    .login-hint{font-size:12px;color:var(--faint);line-height:1.6;}
+    /* Admin badge in nav */
+    .btn-chef{background:transparent;color:rgba(212,222,196,0.45);border:0.5px solid rgba(212,222,196,0.2);border-radius:8px;padding:7px 13px;font-family:'Noto Sans SC',sans-serif;font-size:12px;font-weight:300;cursor:pointer;white-space:nowrap;transition:all 0.15s;display:flex;align-items:center;gap:6px;}
+    .btn-chef:hover{color:var(--logo);border-color:rgba(212,222,196,0.4);}
+    .btn-chef.admin-on{color:#97C459;border-color:#97C459;background:rgba(151,196,89,0.1);}
+    .admin-dot{width:6px;height:6px;border-radius:50%;background:#97C459;display:none;}
+    .admin-on .admin-dot{display:block;}
     /* Edit modal */
     .edit-modal-overlay{display:none;position:fixed;inset:0;background:rgba(46,53,40,0.65);z-index:300;align-items:center;justify-content:center;padding:24px;}
     .edit-modal-overlay.open{display:flex;}
@@ -229,7 +250,10 @@
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5.5" stroke="#D4DEC4" stroke-width="1.5"/><path d="M11 11l3 3" stroke="#D4DEC4" stroke-width="1.5" stroke-linecap="round"/></svg>
       <input id="searchInput" placeholder="搜索食谱或食材..." oninput="debounceSearch()" />
     </div>
-    <div class="nav-right"><button class="btn-add" onclick="openAddPanel()">+ 添加食谱</button></div>
+    <div class="nav-right">
+      <button class="btn-chef" id="btnChef" onclick="openLoginModal()"><span class="admin-dot"></span><span id="btnChefLabel">👨‍🍳 Chef Wang</span></button>
+      <button class="btn-add" id="btnAdd" style="display:none;" onclick="openAddPanel()">+ 添加食谱</button>
+    </div>
   </nav>
   <div class="cuisine-bar">
     <div class="ctab active" onclick="switchCuisine('all',this)"><div class="ctab-dot" style="background:#8A9880"></div><span class="ctab-label">全部</span><span class="ctab-count" id="count-all">—</span></div>
@@ -291,7 +315,7 @@
             <div class="field-label">菜谱照片（选填）</div>
             <div id="manualPhotoPreview" style="display:none;">
               <div class="photo-preview-wrap">
-                <img id="manualPhotoImg" src="" alt="预览" />
+                <div class="photo-circle-frame"><img id="manualPhotoImg" src="" alt="预览" /></div>
                 <button class="photo-preview-remove" onclick="removePhoto('manual')">✕ 移除</button>
               </div>
             </div>
@@ -328,7 +352,7 @@
   <div class="modal-overlay" id="recipeModal" onclick="if(event.target===this)closeRecipeModal()">
     <div class="modal">
       <div id="modalPhotoWrap" style="display:none;" class="modal-photo-wrap">
-        <img id="modalPhoto" src="" alt="" />
+        <div class="modal-photo-circle"><img id="modalPhoto" src="" alt="" /></div>
       </div>
       <div class="modal-header">
         <div><div class="modal-title" id="modalTitle">—</div><div class="modal-meta" id="modalMeta">—</div></div>
@@ -348,11 +372,10 @@
           </div>
         </div>
       </div>
-      <div class="modal-actions" id="modalActions">
+      <div class="modal-actions" id="modalActions" style="display:none;">
         <button class="modal-btn" onclick="openEditModal()">✏️ 修改</button>
         <button class="modal-btn danger" onclick="deleteCurrentRecipe()">🗑 删除</button>
-      </div>
-    </div>
+      </div>    </div>
   </div>
 
   <!-- Edit Modal -->
@@ -369,7 +392,7 @@
           <div class="edit-field-label">菜谱照片</div>
           <div id="editPhotoPreview" style="display:none;">
             <div class="photo-preview-wrap">
-              <img id="editPhotoImg" src="" alt="预览" />
+              <div class="photo-circle-frame"><img id="editPhotoImg" src="" alt="预览" /></div>
               <button class="photo-preview-remove" onclick="removePhoto('edit')">✕ 移除</button>
             </div>
           </div>
@@ -404,13 +427,98 @@
     </div>
   </div>
 
+  <!-- Admin Login Modal -->
+  <div class="login-modal-overlay" id="loginModal" onclick="if(event.target===this)closeLoginModal()">
+    <div class="login-modal">
+      <div class="login-modal-header">
+        <div class="login-modal-title">👨‍🍳 Chef Wang 管理员登录</div>
+        <button class="modal-close" onclick="closeLoginModal()">✕</button>
+      </div>
+      <div class="login-modal-body">
+        <div id="loginStatus"></div>
+        <p class="login-hint" id="loginHintText">请输入管理员密码以解锁编辑和删除功能。</p>
+        <div class="field-group" id="loginPwGroup">
+          <div class="field-label">密码</div>
+          <input class="field-input" id="loginPwInput" type="password" placeholder="输入密码…" onkeydown="if(event.key==='Enter')submitLogin()" />
+        </div>
+        <button class="submit-btn" id="loginSubmitBtn" onclick="submitLogin()">
+          <div class="spinner" id="loginSpinner"></div>
+          <span id="loginBtnText">登录</span>
+        </button>
+        <button class="submit-btn" id="logoutBtn" style="display:none;background:#993C1D;" onclick="doLogout()">退出管理员模式</button>
+      </div>
+    </div>
+  </div>
+
   <script>
   const state={cuisine:'all',methods:new Set(),tags:new Set(),sort:'newest',search:'',recipes:[]};
   const METHOD_MAP={'炸':'mb-fry','蒸':'mb-steam','烤':'mb-bake','煮':'mb-boil','炒':'mb-stirfry','煎':'mb-pan'};
   const CUISINE_LABEL={cn:'中餐',wn:'西餐'};
   let currentRecipeId=null;
-  // photo state: {manual: base64|null, edit: base64|null, editKept: base64|null}
   const photoState={manual:null,edit:null,editKept:null};
+
+  // ── Admin auth ─────────────────────────────────
+  function isAdmin(){return!!sessionStorage.getItem('cw_token');}
+
+  function applyAdminUI(){
+    const admin=isAdmin();
+    const btn=document.getElementById('btnChef');
+    const label=document.getElementById('btnChefLabel');
+    btn.classList.toggle('admin-on',admin);
+    label.textContent=admin?'✓ 已登录':'👨‍🍳 Chef Wang';
+    document.getElementById('btnAdd').style.display=admin?'':'none';
+    // show/hide panel (add recipes sidebar)
+    document.querySelector('.panel').style.display=admin?'':'none';
+    // recalc grid
+    document.querySelector('.main').style.gridTemplateColumns=admin?'1fr 340px':'1fr';
+  }
+
+  function openLoginModal(){
+    const admin=isAdmin();
+    document.getElementById('loginPwGroup').style.display=admin?'none':'flex';
+    document.getElementById('loginSubmitBtn').style.display=admin?'none':'flex';
+    document.getElementById('logoutBtn').style.display=admin?'flex':'none';
+    document.getElementById('loginHintText').textContent=admin
+      ?'你已以 Chef Wang 身份登录，拥有完整管理权限。'
+      :'请输入管理员密码以解锁编辑和删除功能。';
+    document.getElementById('loginPwInput').value='';
+    document.getElementById('loginStatus').innerHTML='';
+    document.getElementById('loginModal').classList.add('open');
+    if(!admin)setTimeout(()=>document.getElementById('loginPwInput').focus(),80);
+  }
+  function closeLoginModal(){document.getElementById('loginModal').classList.remove('open');}
+
+  async function submitLogin(){
+    const pw=document.getElementById('loginPwInput').value;
+    if(!pw){document.getElementById('loginStatus').innerHTML=`<div style="font-size:12px;color:#E24B4A;margin-bottom:4px;">请输入密码</div>`;return;}
+    document.getElementById('loginSpinner').style.display='block';
+    document.getElementById('loginBtnText').style.opacity='0.5';
+    document.getElementById('loginSubmitBtn').disabled=true;
+    try{
+      const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pw})});
+      const data=await res.json();
+      if(data.success){
+        sessionStorage.setItem('cw_token',data.token);
+        applyAdminUI();
+        closeLoginModal();
+        showToast('✓ 欢迎回来，Chef Wang！');
+      } else {
+        document.getElementById('loginStatus').innerHTML=`<div style="font-size:12px;color:#E24B4A;margin-bottom:4px;">密码错误，请重试</div>`;
+        document.getElementById('loginPwInput').value='';
+        document.getElementById('loginPwInput').focus();
+      }
+    }catch{document.getElementById('loginStatus').innerHTML=`<div style="font-size:12px;color:#E24B4A;margin-bottom:4px;">网络错误，请重试</div>`;}
+    finally{document.getElementById('loginSpinner').style.display='none';document.getElementById('loginBtnText').style.opacity='1';document.getElementById('loginSubmitBtn').disabled=false;}
+  }
+
+  function doLogout(){
+    sessionStorage.removeItem('cw_token');
+    applyAdminUI();
+    closeLoginModal();
+    showToast('已退出管理员模式');
+    // close any open modals that show admin controls
+    closeRecipeModal();
+  }
 
   // ── Photo helpers ──────────────────────────────
   function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=e=>res(e.target.result);r.onerror=rej;r.readAsDataURL(file);});}
@@ -521,6 +629,7 @@
     document.getElementById('modalSteps').innerHTML='';
     document.getElementById('modalTipsSection').style.display='none';
     document.getElementById('modalPhotoWrap').style.display='none';
+    document.getElementById('modalActions').style.display=isAdmin()?'flex':'none';
     document.getElementById('recipeModal').classList.add('open');
     try{
       const data=await api('/recipes/'+id);const r=data.recipe;
@@ -532,7 +641,7 @@
       document.getElementById('modalSteps').innerHTML=(r.steps||[]).map((s,i)=>`<li class="step-item"><div class="step-num">${i+1}</div><div class="step-text">${s}</div></li>`).join('')||`<li class="step-item"><div class="step-text" style="color:var(--faint)">暂无步骤信息</div></li>`;
       if(r.tips){document.getElementById('modalTipsSection').style.display='block';document.getElementById('modalTipsText').textContent=r.tips;}
       if(r.photo_url){
-        document.getElementById('modalPhotoWrap').style.display='block';
+        document.getElementById('modalPhotoWrap').style.display='flex';
         document.getElementById('modalPhoto').src=r.photo_url;
       }
     }catch(err){document.getElementById('modalTitle').textContent='加载失败';document.getElementById('modalMeta').textContent=err.message;}
@@ -656,12 +765,13 @@
   function updateActiveCount(){const el=document.getElementById('active-count');const p=[];if(state.methods.size)p.push(state.methods.size+' 个烹饪方式');if(state.tags.size)p.push(state.tags.size+' 个标签');el.textContent=p.length?p.join(' · '):'全部显示';}
   let st;function debounceSearch(){clearTimeout(st);state.search=document.getElementById('searchInput').value.trim();st=setTimeout(loadRecipes,350);}
   function switchPanelTab(id){document.querySelectorAll('.ptab').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.ps').forEach(s=>s.classList.remove('active'));document.getElementById('ptab-'+id).classList.add('active');document.getElementById('ps-'+id).classList.add('active');}
-  function openAddPanel(){switchPanelTab('manual');}
+  function openAddPanel(){if(!isAdmin()){openLoginModal();return;}switchPanelTab('manual');}
   function singleChip(el,groupId){document.querySelectorAll('#'+groupId+' .mchip').forEach(c=>c.classList.remove('on'));el.classList.add('on');}
   function getActiveChip(groupId){const el=document.querySelector('#'+groupId+' .mchip.on');return el?el.textContent.trim():null;}
   function setLoading(type,loading){const btn=document.getElementById(type+'SubmitBtn'),sp=document.getElementById(type+'Spinner'),tx=document.getElementById(type+'SubmitText');btn.disabled=loading;sp.style.display=loading?'block':'none';tx.style.opacity=loading?0.5:1;}
   let tt;function showToast(msg,isError=false){const el=document.getElementById('toast');el.textContent=msg;el.className='toast'+(isError?' error':'');clearTimeout(tt);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('show')));tt=setTimeout(()=>el.classList.remove('show'),3200);}
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEditModal();closeRecipeModal();}});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeEditModal();closeRecipeModal();closeLoginModal();}});
+  applyAdminUI();
   loadRecipes();
   </script>
 </body>

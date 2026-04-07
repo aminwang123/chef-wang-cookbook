@@ -165,6 +165,18 @@ function parseAIJson(raw) {
 
 app.get('/health', (req, res) => res.json({ status: 'ok', app: 'CHEF WANG 食谱' }));
 
+// POST admin login — simple password check, returns a token
+app.post('/api/auth/login', (req, res) => {
+  const { password } = req.body;
+  const adminPw = process.env.ADMIN_PASSWORD || 'chefwang';
+  if (password === adminPw) {
+    const token = Buffer.from(`chef-wang:${Date.now()}`).toString('base64');
+    res.json({ success: true, token });
+  } else {
+    res.status(401).json({ success: false, error: '密码错误' });
+  }
+});
+
 // GET all recipes
 app.get('/api/recipes', (req, res) => {
   try {
